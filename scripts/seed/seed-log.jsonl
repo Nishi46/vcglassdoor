@@ -1,0 +1,20 @@
+{"id":"rec4Le8RKqfZLt2VS","name":"Mary Meeker","firm":"Bond Capital","status":"ok","ai_overall":3.5,"ai_confidence":0.7,"snippet_count":2,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:19:21.281Z"}
+{"id":"rec8YCYJQeqUYXjAb","name":"Mike Moritz","firm":"Sequoia Capital","status":"ok","ai_overall":2.5,"ai_confidence":0.75,"snippet_count":8,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:19:30.227Z"}
+{"id":"rec8hoEtPtOo7gUZ9","name":"Paul Graham","firm":"Y Combinator","status":"ok","ai_overall":2.5,"ai_confidence":0.75,"snippet_count":4,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:19:38.985Z"}
+{"id":"recBv0Cs8bz7eapBD","name":"Alfred Lin","firm":"Sequoia Capital","status":"ok","ai_overall":2.5,"ai_confidence":0.5,"snippet_count":10,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:19:47.912Z"}
+{"id":"recE7VnSTJLa4qdLf","name":"Hunter Walk","firm":"Homebrew","status":"ok","ai_overall":3,"ai_confidence":0.4,"snippet_count":10,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:19:56.819Z"}
+{"id":"recMtYD1bL6AsqHJZ","name":"Roelof Botha","firm":"Sequoia Capital","status":"ok","ai_overall":3,"ai_confidence":0.5,"snippet_count":10,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:20:05.112Z"}
+{"id":"recQ6z2FXW1mGu0K2","name":"Vinod Khosla","firm":"Khosla Ventures","status":"ok","ai_overall":2.5,"ai_confidence":0.4,"snippet_count":7,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:20:14.393Z"}
+{"id":"recc4lz03Ey8I4eR9","name":"Bill Gurley","firm":"Benchmark","status":"ok","ai_overall":3.2,"ai_confidence":0.4,"snippet_count":7,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:20:23.856Z"}
+{"id":"recc67ClUjyMeNHHf","name":"Satya Patel","firm":"Homebrew","status":"ok","ai_overall":0,"ai_confidence":0.2,"snippet_count":2,"signal_count":2,"dry_run":false,"ts":"2026-06-23T23:20:30.553Z"}
+{"id":"recdJprbQHQkXgRIs","name":"Marc Andreessen","firm":"Andreessen Horowitz","status":"ok","ai_overall":1.5,"ai_confidence":0.8,"snippet_count":2,"signal_count":3,"dry_run":false,"ts":"2026-06-23T23:20:37.982Z"}
+{"id":"receu1Hes1TBAWmQe","name":"Josh Kopelman","firm":"First Round Capital","status":"ok","ai_overall":3.8,"ai_confidence":0.4,"snippet_count":10,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:20:47.505Z"}
+{"id":"recgHuwJpU9qwzgEp","name":"Pejman Nozad","firm":"Pear VC","status":"ok","ai_overall":3,"ai_confidence":0.6,"snippet_count":6,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:20:56.413Z"}
+{"id":"recijYeL7x1GEPR6n","name":"Jessica Livingston","firm":"Y Combinator","status":"ok","ai_overall":4,"ai_confidence":0.6,"snippet_count":10,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:21:05.426Z"}
+{"id":"recmRH8HomoVsBkDM","name":"Aileen Lee","firm":"Cowboy Ventures","status":"ok","ai_overall":3.8,"ai_confidence":0.6,"snippet_count":10,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:21:14.090Z"}
+{"id":"recmrbSMRRX4guZR0","name":"Peter Thiel","firm":"Founders Fund","status":"ok","ai_overall":1.5,"ai_confidence":0.4,"snippet_count":6,"signal_count":4,"dry_run":false,"ts":"2026-06-23T23:21:22.156Z"}
+{"id":"recpPlR01xkZWOdPV","name":"John Doerr","firm":"Kleiner Perkins","status":"ok","ai_overall":3.5,"ai_confidence":0.5,"snippet_count":8,"signal_count":4,"dry_run":false,"ts":"2026-06-23T23:21:30.897Z"}
+{"id":"recrGp3Nzm54QIOTy","name":"Kirsten Green","firm":"Forerunner Ventures","status":"ok","ai_overall":3.5,"ai_confidence":0.5,"snippet_count":4,"signal_count":2,"dry_run":false,"ts":"2026-06-23T23:21:37.883Z"}
+{"id":"recsuBf332XbvUWmW","name":"Ben Horowitz","firm":"Andreessen Horowitz","status":"ok","ai_overall":4,"ai_confidence":0.2,"snippet_count":5,"signal_count":1,"dry_run":false,"ts":"2026-06-23T23:21:44.258Z"}
+{"id":"recy6rmNuelhsYN22","name":"Garry Tan","firm":"Y Combinator","status":"ok","ai_overall":2.5,"ai_confidence":0.35,"snippet_count":8,"signal_count":4,"dry_run":false,"ts":"2026-06-23T23:21:53.479Z"}
+{"id":"recyrqke1karVfeOG","name":"Reid Hoffman","firm":"Greylock","status":"ok","ai_overall":2.8,"ai_confidence":0.5,"snippet_count":6,"signal_count":5,"dry_run":false,"ts":"2026-06-23T23:22:03.073Z"}
