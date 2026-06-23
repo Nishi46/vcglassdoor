@@ -66,7 +66,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
           </motion.p>
 
           {/* Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.02] text-white mb-6">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-white mb-6" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.03em" }}>
             <RevealWord text="Know who" delay={0.35} />
             <br />
             <span style={{ color: "rgba(255,255,255,0.65)" }}>
@@ -120,7 +120,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-6" style={{ color: "rgba(96,165,250,0.75)" }}>
                   The problem
                 </p>
-                <h2 className="text-3xl sm:text-4xl font-black text-white leading-[1.1] mb-5">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-[1.1] mb-5" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.025em" }}>
                   VC runs on{" "}
                   <span style={{ color: "rgba(248,113,113,0.9)" }}>open secrets.</span>
                 </h2>
@@ -161,7 +161,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "rgba(96,165,250,0.75)" }}>
                   Directory
                 </p>
-                <h2 className="text-2xl font-black text-white">
+                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.02em" }}>
                   {partners.length > 0
                     ? <>{partners.length} {partners.length === 1 ? "partner" : "partners"} reviewed</>
                     : "Be the first to submit"}
@@ -205,14 +205,19 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
               href={tallyUrl || "/submit"}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-2xl text-sm text-white"
+              className="inline-flex items-center gap-2.5 font-semibold px-8 py-4 rounded-full text-sm text-white cursor-pointer"
               style={{
-                background: "rgba(37,99,235,0.9)",
-                border: "1px solid rgba(96,165,250,0.3)",
+                background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%)",
+                boxShadow: "0 0 0 1px rgba(96,165,250,0.25), 0 4px 24px rgba(37,99,235,0.35)",
+                fontFamily: "var(--font-heading)",
+                letterSpacing: "0.01em",
               }}
-              whileHover={{ scale: 1.04, background: "rgba(37,99,235,1)" }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              whileHover={{
+                boxShadow: "0 0 0 1px rgba(96,165,250,0.5), 0 8px 32px rgba(37,99,235,0.5)",
+                y: -1,
+              }}
+              whileTap={{ scale: 0.97, y: 0 }}
+              transition={{ duration: 0.15 }}
             >
               Leave a verified review
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">

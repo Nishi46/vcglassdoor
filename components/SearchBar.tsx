@@ -61,14 +61,17 @@ export default function SearchBar({ defaultValue = "", dark = false }: { default
 
         <motion.button
           type="submit"
-          className="m-1.5 text-sm font-semibold px-4 py-2 rounded-xl shrink-0"
+          className="m-1.5 text-sm font-semibold px-5 py-2 rounded-full shrink-0 cursor-pointer"
           style={{
             background: "linear-gradient(135deg, #1d4ed8, #3b82f6)",
             color: "white",
+            fontFamily: "var(--font-heading)",
+            letterSpacing: "0.01em",
+            boxShadow: "0 2px 12px rgba(37,99,235,0.3)",
           }}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          transition={{ type: "spring", stiffness: 400, damping: 20 }}
+          whileHover={{ boxShadow: "0 4px 20px rgba(37,99,235,0.5)", y: -1 }}
+          whileTap={{ scale: 0.96, y: 0 }}
+          transition={{ duration: 0.15 }}
         >
           Search
         </motion.button>

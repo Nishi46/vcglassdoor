@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Space_Grotesk, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import ClientShell from "@/components/ClientShell";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading", weight: ["400", "500", "600", "700"] });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-body", weight: ["400", "500", "700"] });
 
 export const metadata: Metadata = {
   title: "VCGlassdoor — Verified VC Partner Reviews",
@@ -16,11 +17,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL ?? "";
 
   return (
-    <html lang="en" className={`${geist.variable} h-full`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} h-full`}>
       <body
         className="min-h-full flex flex-col"
         style={{
-          fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
+          fontFamily: "var(--font-body), system-ui, sans-serif",
           background: "#030818",
           color: "white",
         }}
@@ -48,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">VCGlassdoor</p>
+                  <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>VCGlassdoor</p>
                   <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>The open secret, finally on record.</p>
                 </div>
               </div>
