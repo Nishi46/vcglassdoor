@@ -37,9 +37,37 @@ function InitialsAvatar({ name, firm }: { name: string; firm: string }) {
     .slice(0, 2)
     .join("")
     .toUpperCase();
+
+  const colors = [
+    "bg-blue-100 text-blue-700",
+    "bg-violet-100 text-violet-700",
+    "bg-emerald-100 text-emerald-700",
+    "bg-amber-100 text-amber-700",
+    "bg-rose-100 text-rose-700",
+    "bg-cyan-100 text-cyan-700",
+  ];
+  const idx = (name + firm).split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
+
   return (
-    <div className="w-20 h-20 rounded-full bg-gray-800 text-white flex items-center justify-center text-2xl font-semibold">
+    <div className={`w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold ${colors[idx]}`}>
       {initials || firm[0]?.toUpperCase() || "?"}
+    </div>
+  );
+}
+
+function ScoreBadge({ value }: { value: number }) {
+  const color =
+    value >= 4 ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+    value >= 3 ? "bg-blue-50 text-blue-700 border-blue-200" :
+    value > 0  ? "bg-amber-50 text-amber-700 border-amber-200" :
+    "bg-gray-50 text-gray-400 border-gray-200";
+
+  return (
+    <div className={`inline-flex items-baseline gap-1 border rounded-xl px-4 py-2 ${color}`}>
+      <span className="text-3xl font-bold tabular-nums">
+        {value > 0 ? value.toFixed(1) : "—"}
+      </span>
+      <span className="text-sm opacity-60">/ 5</span>
     </div>
   );
 }
@@ -60,104 +88,110 @@ export default async function PartnerPage({
     ? `${tallyUrl}?partner=${encodeURIComponent(partner.name)}`
     : "/submit";
 
+  const avgResponsiveness = reviews.length
+    ? reviews.reduce((s, r) => s + r.rating_responsiveness, 0) / reviews.length
+    : 0;
+  const avgBehavior = reviews.length
+    ? reviews.reduce((s, r) => s + r.rating_behavior, 0) / reviews.length
+    : 0;
+  const avgFounderFriendly = reviews.length
+    ? reviews.reduce((s, r) => s + r.rating_founder_friendly, 0) / reviews.length
+    : 0;
+  const avgTermSheet = reviews.length
+    ? reviews.reduce((s, r) => s + r.rating_term_sheet_match, 0) / reviews.length
+    : 0;
+  const avgOverall = reviews.length
+    ? reviews.reduce((s, r) => s + r.rating_overall, 0) / reviews.length
+    : 0;
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      {/* Back */}
+    <div className="max-w-3xl mx-auto px-5 py-10">
+      {/* Breadcrumb */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-blue-600 mb-8 transition-colors group"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+        <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
         All partners
       </Link>
 
-      {/* Partner header */}
-      <div className="flex items-start gap-6 mb-10">
-        {partner.photo_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={partner.photo_url}
-            alt={partner.name}
-            className="w-20 h-20 rounded-full object-cover shrink-0"
-          />
-        ) : (
-          <InitialsAvatar name={partner.name} firm={partner.firm} />
-        )}
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">{partner.name}</h1>
-          <p className="text-gray-500 mt-1">
-            {partner.title}
-            {partner.title && partner.firm ? " · " : ""}
-            {partner.firm}
-          </p>
-          {partner.linkedin_url && (
-            <a
-              href={partner.linkedin_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 mt-2"
-            >
-              LinkedIn →
-            </a>
+      {/* Partner hero */}
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 mb-6">
+        <div className="flex items-start gap-6">
+          {partner.photo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={partner.photo_url}
+              alt={partner.name}
+              className="w-20 h-20 rounded-2xl object-cover shrink-0 shadow-sm"
+            />
+          ) : (
+            <InitialsAvatar name={partner.name} firm={partner.firm} />
           )}
-          <div className="mt-3 flex items-center gap-3">
-            <span className="text-2xl font-bold text-gray-900">
-              {partner.avg_overall > 0 ? partner.avg_overall.toFixed(1) : "—"}
-            </span>
-            <span className="text-gray-400 text-sm">/ 5 overall</span>
-            <span className="text-gray-400 text-sm">
-              · {partner.review_count}{" "}
-              {partner.review_count === 1 ? "review" : "reviews"}
-            </span>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{partner.name}</h1>
+                <p className="text-gray-500 mt-1">
+                  {partner.title && <span>{partner.title}</span>}
+                  {partner.title && partner.firm && <span className="text-gray-300 mx-1.5">·</span>}
+                  {partner.firm && <span className="font-medium text-gray-700">{partner.firm}</span>}
+                </p>
+                {partner.linkedin_url && (
+                  <a
+                    href={partner.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 mt-2 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+
+              <ScoreBadge value={partner.avg_overall} />
+            </div>
+
+            <div className="mt-4 flex items-center gap-3 flex-wrap">
+              <span className="text-sm text-gray-500 bg-gray-50 border border-gray-100 px-3 py-1 rounded-lg">
+                {partner.review_count} verified {partner.review_count === 1 ? "review" : "reviews"}
+              </span>
+              <Link
+                href={reviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+              >
+                + Add your experience
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Rating breakdown */}
       {reviews.length > 0 && (
-        <div className="bg-gray-50 rounded-xl p-6 mb-10 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">Rating breakdown</h2>
-          <RatingDisplay
-            label="Overall"
-            value={
-              reviews.reduce((s, r) => s + r.rating_overall, 0) / reviews.length
-            }
-          />
-          <RatingDisplay
-            label="Responsiveness"
-            value={
-              reviews.reduce((s, r) => s + r.rating_responsiveness, 0) /
-              reviews.length
-            }
-          />
-          <RatingDisplay
-            label="Behavior in the room"
-            value={
-              reviews.reduce((s, r) => s + r.rating_behavior, 0) / reviews.length
-            }
-          />
-          <RatingDisplay
-            label="Founder-friendliness"
-            value={
-              reviews.reduce((s, r) => s + r.rating_founder_friendly, 0) /
-              reviews.length
-            }
-          />
-          <RatingDisplay
-            label="Term sheet matched handshake"
-            value={
-              reviews.reduce((s, r) => s + r.rating_term_sheet_match, 0) /
-              reviews.length
-            }
-          />
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
+          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Rating breakdown</h2>
+          <div className="space-y-1">
+            <RatingDisplay label="Overall" value={avgOverall} highlight />
+            <RatingDisplay label="Responsiveness" value={avgResponsiveness} />
+            <RatingDisplay label="Behavior in the room" value={avgBehavior} />
+            <RatingDisplay label="Founder-friendliness" value={avgFounderFriendly} />
+            <RatingDisplay label="Term sheet matched handshake" value={avgTermSheet} />
+          </div>
         </div>
       )}
 
-      {/* Reviews */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-semibold text-gray-900">
+      {/* Reviews section */}
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="font-semibold text-gray-900 text-lg">
           {reviews.length > 0
             ? `${reviews.length} verified ${reviews.length === 1 ? "review" : "reviews"}`
             : "No reviews yet"}
@@ -166,22 +200,33 @@ export default async function PartnerPage({
           href={reviewUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+          className="text-sm font-medium bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
         >
           Add your experience
         </Link>
       </div>
 
       {reviews.length === 0 ? (
-        <div className="text-center py-16 border border-dashed border-gray-200 rounded-xl text-gray-400">
-          <p className="mb-2">Reviews publish once 3+ verified submissions exist.</p>
+        <div className="text-center py-20 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
+            </svg>
+          </div>
+          <p className="text-gray-600 font-medium mb-1">No reviews published yet</p>
+          <p className="text-sm text-gray-400 max-w-xs mx-auto mb-5">
+            Reviews publish once 3+ verified submissions exist — protecting anonymity.
+          </p>
           <Link
             href={reviewUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-900 underline text-sm"
+            className="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-blue-700 shadow-sm transition-all"
           >
-            Submit yours →
+            Submit yours
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
           </Link>
         </div>
       ) : (
