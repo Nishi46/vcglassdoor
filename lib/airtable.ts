@@ -17,6 +17,20 @@ export interface Partner {
   photo_url: string;
   avg_overall: number;
   review_count: number;
+  // AI-seeded fields (optional — only present after seeding pipeline runs)
+  ai_overall?: number;
+  ai_signals?: string; // JSON string: Array<{type, text, source}>
+  ai_source_count?: number;
+  ai_confidence?: number;
+  ai_seeded?: boolean;
+}
+
+export interface AiSeedPayload {
+  ai_overall: number;
+  ai_signals: string; // JSON.stringify([...])
+  ai_source_count: number;
+  ai_confidence: number;
+  ai_seeded: boolean;
 }
 
 export interface Review {
@@ -45,6 +59,11 @@ function toPartner(record: Airtable.Record<Airtable.FieldSet>): Partner {
     photo_url: (f["photo_url"] as string) ?? "",
     avg_overall: Number.isFinite(f["avg_overall"] as number) ? (f["avg_overall"] as number) : 0,
     review_count: (f["review_count"] as number) ?? 0,
+    ai_overall: (f["ai_overall"] as number) ?? undefined,
+    ai_signals: (f["ai_signals"] as string) ?? undefined,
+    ai_source_count: (f["ai_source_count"] as number) ?? undefined,
+    ai_confidence: (f["ai_confidence"] as number) ?? undefined,
+    ai_seeded: (f["ai_seeded"] as boolean) ?? false,
   };
 }
 
@@ -78,6 +97,11 @@ export async function getPublishedPartners(): Promise<Partner[]> {
         "photo_url",
         "avg_overall",
         "review_count",
+        "ai_overall",
+        "ai_signals",
+        "ai_source_count",
+        "ai_confidence",
+        "ai_seeded",
       ],
       sort: [{ field: "avg_overall", direction: "desc" }],
     })
@@ -98,6 +122,11 @@ export async function getPartnerBySlug(slug: string): Promise<Partner | null> {
         "photo_url",
         "avg_overall",
         "review_count",
+        "ai_overall",
+        "ai_signals",
+        "ai_source_count",
+        "ai_confidence",
+        "ai_seeded",
       ],
       maxRecords: 1,
     })
@@ -169,4 +198,38 @@ export async function getAllPublishedPartnerSlugs(): Promise<string[]> {
   return records
     .map((r) => r.fields["slug"] as string)
     .filter(Boolean);
+}
+
+// ── Seeding helpers ──────────────────────────────────────────────────────────
+
+export async function getAllPartnersForSeeding(): Promise<Partner[]> {
+  const records = await base(PARTNERS)
+    .select({
+      fields: [
+        "name",
+        "firm",
+        "title",
+        "slug",
+        "linkedin_url",
+        "photo_url",
+        "avg_overall",
+        "review_count",
+        "ai_seeded",
+      ],
+    })
+    .all();
+  return records.map(toPartner);
+}
+
+export async function updatePartnerAiSeed(
+  recordId: string,
+  payload: AiSeedPayload
+): Promise<void> {
+  await base(PARTNERS).update(recordId, {
+    ai_overall: payload.ai_overall,
+    ai_signals: payload.ai_signals,
+    ai_source_count: payload.ai_source_count,
+    ai_confidence: payload.ai_confidence,
+    ai_seeded: payload.ai_seeded,
+  });
 }

@@ -155,7 +155,28 @@ export default async function PartnerPage({
                 )}
               </div>
 
-              <ScoreBadge value={partner.avg_overall} />
+              {(() => {
+                const showVerified = (partner.review_count ?? 0) >= 3;
+                const showAi = !showVerified && partner.ai_seeded && (partner.ai_overall ?? 0) > 0;
+                const lowConfidence = (partner.ai_confidence ?? 0) < 0.3;
+                return showVerified ? (
+                  <ScoreBadge value={partner.avg_overall} />
+                ) : showAi && !lowConfidence ? (
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="inline-flex items-baseline gap-1 border rounded-xl px-4 py-2"
+                      style={{ background: "rgba(31,86,115,0.08)", borderColor: "rgba(117,159,188,0.3)" }}>
+                      <span className="text-3xl font-bold tabular-nums" style={{ color: "#90c3c8" }}>
+                        {partner.ai_overall?.toFixed(1)}
+                      </span>
+                      <span className="text-sm" style={{ color: "#759fbc", opacity: 0.7 }}>/ 5</span>
+                    </div>
+                    <span className="text-xs px-2 py-0.5 rounded-full"
+                      style={{ background: "rgba(31,86,115,0.12)", color: "#90c3c8", border: "1px solid rgba(117,159,188,0.25)" }}>
+                      AI est. · {partner.ai_source_count} sources
+                    </span>
+                  </div>
+                ) : null;
+              })()}
             </div>
 
             <div className="mt-4 flex items-center gap-3 flex-wrap">
@@ -188,6 +209,54 @@ export default async function PartnerPage({
           </div>
         </div>
       )}
+
+      {/* AI signals — only shown when no verified reviews yet */}
+      {(() => {
+        const showVerified = (partner.review_count ?? 0) >= 3;
+        const showAi = !showVerified && partner.ai_seeded && (partner.ai_overall ?? 0) > 0;
+        const lowConfidence = (partner.ai_confidence ?? 0) < 0.3;
+        if (!showAi) return null;
+        if (lowConfidence) {
+          return (
+            <div className="rounded-2xl p-5 mb-6 text-sm"
+              style={{ background: "rgba(31,86,115,0.06)", border: "1px solid rgba(117,159,188,0.15)", color: "#759fbc" }}>
+              Limited public data available for this partner.
+            </div>
+          );
+        }
+        let signals: Array<{ type: string; text: string; source: string }> = [];
+        try { signals = JSON.parse(partner.ai_signals ?? "[]"); } catch { /* ignore */ }
+        if (signals.length === 0) return null;
+        return (
+          <div className="rounded-2xl p-6 mb-6"
+            style={{ background: "rgba(31,86,115,0.06)", border: "1px solid rgba(117,159,188,0.15)" }}>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#759fbc" }}>
+                Public signals
+              </h2>
+              <span className="text-xs px-2 py-0.5 rounded-full"
+                style={{ background: "rgba(31,86,115,0.12)", color: "#90c3c8", border: "1px solid rgba(117,159,188,0.2)" }}>
+                AI-estimated · not verified
+              </span>
+            </div>
+            <ul className="space-y-2">
+              {signals.map((s, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm">
+                  <span className="mt-0.5 shrink-0 text-base leading-none">
+                    {s.type === "green" ? "✓" : s.type === "red" ? "✗" : "·"}
+                  </span>
+                  <span style={{ color: s.type === "green" ? "#90c3c8" : s.type === "red" ? "#f87171" : "#b9b8d3" }}>
+                    {s.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs mt-4" style={{ color: "#759fbc", opacity: 0.6 }}>
+              Sourced from {partner.ai_source_count} public mentions · Confidence {((partner.ai_confidence ?? 0) * 100).toFixed(0)}%
+            </p>
+          </div>
+        );
+      })()}
 
       {/* Reviews section */}
       <div className="flex items-center justify-between mb-5">

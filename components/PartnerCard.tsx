@@ -148,6 +148,10 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
                         {partner.avg_overall.toFixed(1)}
                       </span>
                     </>
+                  ) : partner.ai_seeded && (partner.ai_overall ?? 0) > 0 ? (
+                    <span className="text-xs font-medium tabular-nums" style={{ color: "#90c3c8" }}>
+                      {partner.ai_overall?.toFixed(1)} AI est.
+                    </span>
                   ) : (
                     <span className="text-xs italic" style={{ color: "#759fbc" }}>No ratings yet</span>
                   )}
