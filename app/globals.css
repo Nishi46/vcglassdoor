@@ -1,69 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* Blue palette */
-  --blue-50:  #eff6ff;
-  --blue-100: #dbeafe;
-  --blue-200: #bfdbfe;
+  --blue-400: #60a5fa;
   --blue-500: #3b82f6;
   --blue-600: #2563eb;
   --blue-700: #1d4ed8;
-  --blue-900: #1e3a8a;
-
-  /* Neutrals */
-  --gray-50:  #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-
-  --background: #ffffff;
-  --surface:    #f9fafb;
-  --foreground: #111827;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #030818;
+  color: white;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  line-height: 1.6;
 }
 
-/* Focus ring — accessible, blue */
-:focus-visible {
-  outline: 2px solid var(--blue-500);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Smooth transitions on interactive elements */
-a, button, input, [role="button"] {
-  transition: all 150ms ease;
-}
+/* Hide default cursor everywhere */
+*, *:hover { cursor: none !important; }
 
 /* Selection */
-::selection {
-  background: var(--blue-100);
-  color: var(--blue-900);
-}
+::selection { background: rgba(37,99,235,0.35); color: white; }
+
+/* Focus ring */
+:focus-visible { outline: 2px solid rgba(96,165,250,0.6); outline-offset: 2px; border-radius: 4px; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
