@@ -17,8 +17,9 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
-/* Hide default cursor everywhere */
-*, *:hover { cursor: none !important; }
+/* Restore natural cursor */
+* { cursor: auto; }
+a, button, [role="button"], input[type="submit"], label[for] { cursor: pointer; }
 
 /* Selection */
 ::selection { background: rgba(37,99,235,0.35); color: white; }

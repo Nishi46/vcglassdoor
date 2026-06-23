@@ -80,11 +80,11 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
       >
         <Link
           href={`/partners/${partner.slug || "#"}`}
-          className="block relative overflow-hidden"
+          className="block relative overflow-hidden cursor-pointer"
           style={{
             borderRadius: "20px",
             background: "linear-gradient(135deg, rgba(15,25,50,0.9), rgba(10,18,40,0.95))",
-            border: "1px solid rgba(96,165,250,0.15)",
+            border: "1px solid rgba(96,165,250,0.22)",
             boxShadow: hovered
               ? "0 20px 60px rgba(37,99,235,0.25), 0 0 0 1px rgba(96,165,250,0.25)"
               : "0 4px 20px rgba(0,0,0,0.4)",
@@ -126,7 +126,7 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
                     <p className="font-semibold text-white truncate text-[15px]">
                       {partner.name || "Unknown Partner"}
                     </p>
-                    <p className="text-sm text-white/50 truncate mt-0.5">
+                    <p className="text-sm text-white/60 truncate mt-0.5">
                       {[partner.title, partner.firm].filter(Boolean).join(" · ")}
                     </p>
                   </div>
@@ -152,7 +152,7 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
                     <span className="text-xs text-white/30 italic">No ratings yet</span>
                   )}
                   <span className="text-white/20">·</span>
-                  <span className="text-xs text-white/40 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+                  <span className="text-xs text-white/55 bg-white/5 px-2 py-0.5 rounded-full border border-white/15">
                     {partner.review_count} {partner.review_count === 1 ? "review" : "reviews"}
                   </span>
                 </div>

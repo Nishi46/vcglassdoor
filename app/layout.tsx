@@ -23,7 +23,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           fontFamily: "var(--font-geist-sans), system-ui, sans-serif",
           background: "#030818",
           color: "white",
-          cursor: "none",
         }}
       >
         <ClientShell>
@@ -50,10 +49,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">VCGlassdoor</p>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>The open secret, finally on record.</p>
+                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>The open secret, finally on record.</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-5 text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>
+              <div className="flex flex-wrap gap-5 text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
                 <a href="/about" className="hover:text-white transition-colors">How it works</a>
                 <a href={tallyUrl || "/submit"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Leave a review</a>
                 <span>© {new Date().getFullYear()}</span>
