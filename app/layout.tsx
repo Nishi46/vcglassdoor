@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="flex items-center gap-3">
                 <div
                   className="w-7 h-7 rounded-lg flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #2563eb, #60a5fa)" }}
+                  style={{ background: "linear-gradient(135deg, #1f5673, #759fbc)" }}
                 >
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
@@ -50,10 +50,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white" style={{ fontFamily: "var(--font-heading)" }}>VCGlassdoor</p>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>The open secret, finally on record.</p>
+                  <p className="text-xs" style={{ color: "#759fbc" }}>The open secret, finally on record.</p>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-5 text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
+              <div className="flex flex-wrap gap-5 text-sm" style={{ color: "#759fbc" }}>
                 <a href="/about" className="hover:text-white transition-colors">How it works</a>
                 <a href={tallyUrl || "/submit"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Leave a review</a>
                 <span>© {new Date().getFullYear()}</span>

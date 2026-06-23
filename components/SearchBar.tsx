@@ -21,7 +21,7 @@ export default function SearchBar({ defaultValue = "", dark = false }: { default
       {/* Glow on focus */}
       {dark && focused && (
         <div className="absolute inset-0 rounded-2xl pointer-events-none"
-          style={{ boxShadow: "0 0 30px rgba(37,99,235,0.35)", borderRadius: "16px" }} />
+          style={{ boxShadow: "0 0 28px rgba(31,86,115,0.45)", borderRadius: "16px" }} />
       )}
 
       <div
@@ -29,19 +29,19 @@ export default function SearchBar({ defaultValue = "", dark = false }: { default
         style={{
           background: dark
             ? focused
-              ? "rgba(15,25,55,0.95)"
-              : "rgba(10,18,40,0.8)"
+              ? "rgba(8,22,35,0.97)"
+              : "rgba(5,15,25,0.85)"
             : "white",
           border: dark
-            ? `1px solid ${focused ? "rgba(96,165,250,0.5)" : "rgba(255,255,255,0.1)"}`
-            : `1px solid ${focused ? "#3b82f6" : "#e5e7eb"}`,
+            ? `1px solid ${focused ? "#759fbc" : "rgba(117,159,188,0.2)"}`
+            : `1px solid ${focused ? "#1f5673" : "#e5e7eb"}`,
           borderRadius: "16px",
-          boxShadow: focused && !dark ? "0 0 0 3px rgba(59,130,246,0.12)" : "none",
+          boxShadow: focused && !dark ? "0 0 0 3px rgba(31,86,115,0.15)" : "none",
         }}
       >
         <svg
           className="w-4 h-4 ml-4 shrink-0 transition-colors"
-          style={{ color: focused ? (dark ? "#60a5fa" : "#3b82f6") : (dark ? "rgba(255,255,255,0.3)" : "#9ca3af") }}
+          style={{ color: focused ? (dark ? "#90c3c8" : "#1f5673") : (dark ? "#759fbc" : "#9ca3af") }}
           fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
@@ -63,13 +63,13 @@ export default function SearchBar({ defaultValue = "", dark = false }: { default
           type="submit"
           className="m-1.5 text-sm font-semibold px-5 py-2 rounded-full shrink-0 cursor-pointer"
           style={{
-            background: "linear-gradient(135deg, #1d4ed8, #3b82f6)",
+            background: "linear-gradient(135deg, #1f5673, #759fbc)",
             color: "white",
             fontFamily: "var(--font-heading)",
             letterSpacing: "0.01em",
-            boxShadow: "0 2px 12px rgba(37,99,235,0.3)",
+            boxShadow: "0 2px 12px rgba(31,86,115,0.4)",
           }}
-          whileHover={{ boxShadow: "0 4px 20px rgba(37,99,235,0.5)", y: -1 }}
+          whileHover={{ boxShadow: "0 4px 20px rgba(31,86,115,0.6)", y: -1 }}
           whileTap={{ scale: 0.96, y: 0 }}
           transition={{ duration: 0.15 }}
         >

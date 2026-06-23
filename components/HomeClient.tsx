@@ -57,7 +57,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
           {/* Eyebrow */}
           <motion.p
             className="text-xs font-medium tracking-[0.2em] uppercase mb-8"
-            style={{ color: "rgba(148,163,184,0.7)" }}
+            style={{ color: "#759fbc" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
@@ -69,14 +69,15 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-white mb-6" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.03em" }}>
             <RevealWord text="Know who" delay={0.35} />
             <br />
-            <span style={{ color: "rgba(255,255,255,0.65)" }}>
+            <span style={{ color: "#b9b8d3" }}>
               <RevealWord text="you're funding." delay={0.55} />
             </span>
           </h1>
 
           {/* Subline */}
           <motion.p
-            className="text-base text-white/60 max-w-sm mb-10 leading-relaxed"
+            className="text-base max-w-sm mb-10 leading-relaxed"
+            style={{ color: "#b9b8d3" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.95 }}
@@ -117,14 +118,14 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <ScrollReveal>
               <div>
-                <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-6" style={{ color: "rgba(96,165,250,0.75)" }}>
+                <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-6" style={{ color: "#759fbc" }}>
                   The problem
                 </p>
                 <h2 className="text-3xl sm:text-4xl font-bold text-white leading-[1.1] mb-5" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.025em" }}>
                   VC runs on{" "}
-                  <span style={{ color: "rgba(248,113,113,0.9)" }}>open secrets.</span>
+                  <span style={{ color: "#90c3c8" }}>open secrets.</span>
                 </h2>
-                <p className="text-white/65 leading-relaxed">
+                <p className="leading-relaxed" style={{ color: "#b9b8d3" }}>
                   Everyone privately knows which partners ghost, which firms re-trade,
                   and which "founder-friendly" funds disappear when things get hard.
                   Nobody says it out loud — because you&apos;ll be pitching them again in 18 months.
@@ -140,10 +141,16 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 { title: "The orphaned founder", desc: "Your champion leaves. Overnight you're reassigned to someone who has never met you." },
               ].map(({ title, desc }, i) => (
                 <ScrollReveal key={title} delay={i * 0.07}>
-                  <div className="px-5 py-4 rounded-xl border border-white/[0.1] hover:border-white/[0.18] transition-colors cursor-pointer"
-                    style={{ background: "rgba(255,255,255,0.04)" }}>
-                    <p className="font-semibold text-white/90 text-sm mb-1">{title}</p>
-                    <p className="text-white/55 text-xs leading-relaxed">{desc}</p>
+                  <div className="px-5 py-4 rounded-xl transition-colors cursor-pointer"
+                    style={{
+                      background: "rgba(31,86,115,0.08)",
+                      border: "1px solid rgba(117,159,188,0.18)",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(144,195,200,0.35)")}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(117,159,188,0.18)")}
+                  >
+                    <p className="font-semibold text-sm mb-1" style={{ color: "#e8e8f0" }}>{title}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "#b9b8d3" }}>{desc}</p>
                   </div>
                 </ScrollReveal>
               ))}
@@ -158,7 +165,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
           <ScrollReveal>
             <div className="flex items-end justify-between mb-10">
               <div>
-                <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "rgba(96,165,250,0.75)" }}>
+                <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "#759fbc" }}>
                   Directory
                 </p>
                 <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.02em" }}>
@@ -171,7 +178,10 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 href={tallyUrl || "/submit"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:flex items-center gap-1.5 text-sm text-white/50 hover:text-white/80 transition-colors cursor-pointer"
+                className="hidden sm:flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer"
+                style={{ color: "#759fbc" }}
+                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = "#90c3c8")}
+                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = "#759fbc")}
               >
                 + Add a review
               </a>
@@ -198,7 +208,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
       <section className="py-28 px-6 text-center">
         <ScrollReveal>
           <div className="max-w-lg mx-auto">
-            <p className="text-white/55 text-sm mb-5">
+            <p className="text-sm mb-5" style={{ color: "#b9b8d3" }}>
               Have you pitched or raised from a VC partner?
             </p>
             <motion.a
@@ -207,13 +217,13 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 font-semibold px-8 py-4 rounded-full text-sm text-white cursor-pointer"
               style={{
-                background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%)",
-                boxShadow: "0 0 0 1px rgba(96,165,250,0.25), 0 4px 24px rgba(37,99,235,0.35)",
+                background: "linear-gradient(135deg, #1f5673 0%, #2a6d8f 50%, #759fbc 100%)",
+                boxShadow: "0 0 0 1px rgba(117,159,188,0.3), 0 4px 24px rgba(31,86,115,0.45)",
                 fontFamily: "var(--font-heading)",
                 letterSpacing: "0.01em",
               }}
               whileHover={{
-                boxShadow: "0 0 0 1px rgba(96,165,250,0.5), 0 8px 32px rgba(37,99,235,0.5)",
+                boxShadow: "0 0 0 1px rgba(144,195,200,0.5), 0 8px 32px rgba(31,86,115,0.6)",
                 y: -1,
               }}
               whileTap={{ scale: 0.97, y: 0 }}
@@ -224,7 +234,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
               </svg>
             </motion.a>
-            <p className="text-white/40 text-xs mt-4">
+            <p className="text-xs mt-4" style={{ color: "#759fbc" }}>
               Always free · Anonymous · 3+ reviews before publishing
             </p>
           </div>
@@ -237,16 +247,17 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
 
 function EmptyDirectoryState({ tallyUrl }: { tallyUrl: string }) {
   return (
-    <div className="text-center py-20 rounded-2xl border border-dashed border-white/[0.12]">
-      <p className="text-white/55 text-sm mb-4">No reviews published yet.</p>
-      <p className="text-white/40 text-xs mb-6 max-w-xs mx-auto">
+    <div className="text-center py-20 rounded-2xl border border-dashed" style={{ borderColor: "rgba(117,159,188,0.2)" }}>
+      <p className="text-sm mb-4" style={{ color: "#b9b8d3" }}>No reviews published yet.</p>
+      <p className="text-xs mb-6 max-w-xs mx-auto" style={{ color: "#759fbc" }}>
         Reviews go live once 3+ verified submissions exist for the same partner.
       </p>
       <a
         href={tallyUrl || "/submit"}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-lg text-white/60 border border-white/10 hover:text-white/90 hover:border-white/20 transition-colors"
+        className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-lg transition-colors"
+        style={{ color: "#90c3c8", border: "1px solid rgba(117,159,188,0.25)" }}
       >
         Leave the first review
       </a>

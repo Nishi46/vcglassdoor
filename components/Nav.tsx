@@ -28,11 +28,11 @@ export default function Nav({ tallyUrl }: { tallyUrl: string }) {
           height: scrolled ? "52px" : "68px",
           borderRadius: scrolled ? "16px" : "0",
           background: scrolled
-            ? "rgba(4, 12, 30, 0.85)"
+            ? "rgba(3, 14, 22, 0.88)"
             : "transparent",
           backdropFilter: scrolled ? "blur(20px)" : "none",
           boxShadow: scrolled
-            ? "0 0 0 1px rgba(96,165,250,0.12), 0 8px 32px rgba(0,0,0,0.4)"
+            ? "0 0 0 1px rgba(117,159,188,0.15), 0 8px 32px rgba(0,0,0,0.5)"
             : "none",
         }}
       >
@@ -40,7 +40,7 @@ export default function Nav({ tallyUrl }: { tallyUrl: string }) {
         <Link href="/" className="flex items-center gap-2.5 group cursor-pointer">
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: "linear-gradient(135deg, #2563eb, #60a5fa)" }}
+            style={{ background: "linear-gradient(135deg, #1f5673, #759fbc)" }}
           >
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
@@ -56,7 +56,8 @@ export default function Nav({ tallyUrl }: { tallyUrl: string }) {
         <nav className="flex items-center gap-1">
           <Link
             href="/about"
-            className="text-sm px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/8 transition-all duration-150 cursor-pointer"
+            className="text-sm px-3 py-2 rounded-lg transition-all duration-150 cursor-pointer"
+            style={{ color: "#b9b8d3" }}
           >
             How it works
           </Link>
@@ -66,14 +67,14 @@ export default function Nav({ tallyUrl }: { tallyUrl: string }) {
             rel="noopener noreferrer"
             className="ml-2 text-sm font-semibold px-4 py-2 rounded-full cursor-pointer"
             style={{
-              background: "rgba(37,99,235,0.15)",
-              color: "#93c5fd",
-              border: "1px solid rgba(96,165,250,0.3)",
+              background: "rgba(31,86,115,0.2)",
+              color: "#90c3c8",
+              border: "1px solid rgba(117,159,188,0.35)",
             }}
             whileHover={{
-              background: "rgba(37,99,235,0.9)",
+              background: "#1f5673",
               color: "white",
-              borderColor: "rgba(96,165,250,0.6)",
+              borderColor: "#759fbc",
             }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.15 }}

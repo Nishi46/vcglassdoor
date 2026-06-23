@@ -80,7 +80,7 @@ export default function SubtleField() {
 
         ctx!.beginPath();
         ctx!.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx!.fillStyle = `rgba(148,163,184,${d.alpha})`; // slate-400
+        ctx!.fillStyle = `rgba(117,159,188,${d.alpha})`; // steel-blue
         ctx!.fill();
       }
 

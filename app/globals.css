@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --blue-400: #60a5fa;
-  --blue-500: #3b82f6;
-  --blue-600: #2563eb;
-  --blue-700: #1d4ed8;
+  --deep-mocha: #463730;
+  --baltic-blue: #1f5673;
+  --steel-blue: #759fbc;
+  --light-blue: #90c3c8;
+  --periwinkle: #b9b8d3;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -26,10 +27,10 @@ h1, h2, h3, h4, h5, h6 {
 a, button, [role="button"], input[type="submit"], label[for] { cursor: pointer; }
 
 /* Selection */
-::selection { background: rgba(37,99,235,0.35); color: white; }
+::selection { background: rgba(31,86,115,0.5); color: white; }
 
 /* Focus ring */
-:focus-visible { outline: 2px solid rgba(96,165,250,0.6); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid #90c3c8; outline-offset: 2px; border-radius: 4px; }
 
 /* Smooth scroll */
 html { scroll-behavior: smooth; }
