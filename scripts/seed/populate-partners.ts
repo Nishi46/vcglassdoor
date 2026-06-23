@@ -190,7 +190,7 @@ async function main() {
     };
     if (p.photo_url) fields.photo_url = p.photo_url;
 
-    await base(TABLE).create(fields);
+    await base(TABLE).create(fields as Airtable.FieldSet);
     console.log(`  Created: ${p.name} @ ${p.firm}`);
     created++;
 
