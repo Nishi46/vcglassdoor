@@ -170,7 +170,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 </p>
                 <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.02em" }}>
                   {partners.length > 0
-                    ? <>{partners.length} {partners.length === 1 ? "partner" : "partners"} reviewed</>
+                    ? <> Partners reviewed</>
                     : "Be the first to submit"}
                 </h2>
               </div>
