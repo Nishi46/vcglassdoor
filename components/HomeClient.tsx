@@ -29,14 +29,14 @@ function RevealWord({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-function ScrollReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function ScrollReveal({ children, delay = 0, opacityOnly = false }: { children: React.ReactNode; delay?: number; opacityOnly?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 36 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      initial={opacityOnly ? { opacity: 0 } : { opacity: 0, y: 36 }}
+      animate={inView ? (opacityOnly ? { opacity: 1 } : { opacity: 1, y: 0 }) : {}}
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
@@ -195,7 +195,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {partners.map((partner, i) => (
-                <ScrollReveal key={partner.id} delay={i * 0.05}>
+                <ScrollReveal key={partner.id} delay={i * 0.05} opacityOnly>
                   <PartnerCard partner={partner} />
                 </ScrollReveal>
               ))}
