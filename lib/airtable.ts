@@ -1,4 +1,5 @@
 import Airtable from "airtable";
+import { POPULAR_PARTNERS } from "./popular-partners";
 
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
   process.env.AIRTABLE_BASE_ID!
@@ -187,7 +188,30 @@ export async function searchPartners(query: string): Promise<Partner[]> {
       sort: [{ field: "avg_overall", direction: "desc" }],
     })
     .all();
-  return records.map(toPartner);
+  const airtablePartners = records.map(toPartner);
+  const airtableSlugs = new Set(airtablePartners.map((p) => p.slug));
+
+  // Merge matching static partners that aren't already in Airtable results
+  const lq = query.toLowerCase();
+  const staticMatches = POPULAR_PARTNERS
+    .filter((sp) =>
+      !airtableSlugs.has(sp.slug) &&
+      (sp.name.toLowerCase().includes(lq) || sp.firm.toLowerCase().includes(lq))
+    )
+    .map((sp): Partner => ({
+      id: `static:${sp.slug}`,
+      name: sp.name,
+      firm: sp.firm,
+      title: sp.title,
+      slug: sp.slug,
+      linkedin_url: "",
+      photo_url: "",
+      avg_overall: 0,
+      review_count: 0,
+      ai_seeded: false,
+    }));
+
+  return [...airtablePartners, ...staticMatches];
 }
 
 export async function getAllPublishedPartnerSlugs(): Promise<string[]> {

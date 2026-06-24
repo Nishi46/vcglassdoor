@@ -1,5 +1,6 @@
 import { searchPartners } from "@/lib/airtable";
 import PartnerCard from "@/components/PartnerCard";
+import StaticPartnerCard from "@/components/StaticPartnerCard";
 import SearchBar from "@/components/SearchBar";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -10,6 +11,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const { q } = await searchParams;
   const query = (q ?? "").trim();
   const partners = query ? await searchPartners(query.toLowerCase()) : [];
+  const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL ?? "/submit";
 
   return (
     <div style={{ background: "linear-gradient(180deg, #030818 0%, #060f24 100%)", minHeight: "100vh" }}>
@@ -34,7 +36,11 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               {partners.length === 1 ? "result" : "results"} for &ldquo;{query}&rdquo;
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {partners.map((p) => <PartnerCard key={p.id} partner={p} />)}
+              {partners.map((p) =>
+                p.id.startsWith("static:")
+                  ? <StaticPartnerCard key={p.id} partner={p} submitUrl={tallyUrl} />
+                  : <PartnerCard key={p.id} partner={p} />
+              )}
             </div>
           </>
         )}

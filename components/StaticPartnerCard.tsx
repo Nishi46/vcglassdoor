@@ -1,32 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion, useSpring, useTransform } from "framer-motion";
 import type { Partner } from "@/lib/airtable";
 
-function StarRating({ value }: { value: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => {
-        const filled = i <= Math.floor(value);
-        return (
-          <svg key={i} className="w-3 h-3" style={{ color: filled ? "#90c3c8" : "rgba(117,159,188,0.2)" }} fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        );
-      })}
-    </div>
-  );
-}
-
 const AVATAR_COLORS = [
-  { bg: "from-[#1f5673] to-[#759fbc]", text: "text-white" },
-  { bg: "from-[#2a4a6b] to-[#b9b8d3]", text: "text-white" },
-  { bg: "from-[#1f5673] to-[#90c3c8]", text: "text-white" },
-  { bg: "from-[#463730] to-[#759fbc]", text: "text-white" },
-  { bg: "from-[#2a3a5c] to-[#b9b8d3]", text: "text-white" },
-  { bg: "from-[#1a4a5a] to-[#90c3c8]", text: "text-white" },
+  { bg: "from-[#1f5673] to-[#759fbc]" },
+  { bg: "from-[#2a4a6b] to-[#b9b8d3]" },
+  { bg: "from-[#1f5673] to-[#90c3c8]" },
+  { bg: "from-[#463730] to-[#759fbc]" },
+  { bg: "from-[#2a3a5c] to-[#b9b8d3]" },
+  { bg: "from-[#1a4a5a] to-[#90c3c8]" },
 ];
 
 function getColor(name: string, firm: string) {
@@ -34,13 +18,12 @@ function getColor(name: string, firm: string) {
   return AVATAR_COLORS[idx];
 }
 
-export default function PartnerCard({ partner }: { partner: Partner }) {
+export default function StaticPartnerCard({ partner, submitUrl }: { partner: Partner; submitUrl: string }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
 
   const mouseX = useSpring(0, { stiffness: 200, damping: 20 });
   const mouseY = useSpring(0, { stiffness: 200, damping: 20 });
-
   const rotateX = useTransform(mouseY, [-0.5, 0.5], ["8deg", "-8deg"]);
   const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-8deg", "8deg"]);
   const glareX = useTransform(mouseX, [-0.5, 0.5], ["0%", "100%"]);
@@ -60,8 +43,7 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
   }
 
   const color = getColor(partner.name, partner.firm);
-  const initials = partner.name
-    .split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase() || "?";
+  const initials = partner.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase() || "?";
 
   return (
     <motion.div
@@ -69,18 +51,13 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
       onMouseMove={onMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={onMouseLeave}
-      style={{
-        perspective: 1000,
-        transformStyle: "preserve-3d",
-        width: "100%",
-      }}
+      style={{ perspective: 1000, transformStyle: "preserve-3d" }}
     >
-      <motion.div
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d", width: "100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      >
-        <Link
-          href={`/partners/${partner.slug || "#"}`}
+      <motion.div style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} transition={{ type: "spring", stiffness: 300, damping: 30 }}>
+        <a
+          href={submitUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="block relative overflow-hidden cursor-pointer"
           style={{
             borderRadius: "20px",
@@ -91,7 +68,6 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
               : "0 4px 20px rgba(0,0,0,0.5)",
             transition: "box-shadow 0.3s ease",
           }}
-          data-cursor="View"
         >
           {/* Glare */}
           <motion.div
@@ -108,25 +84,17 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
 
           <div className="p-5">
             <div className="flex items-start gap-4">
-              {/* Avatar */}
               <motion.div
                 className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center shrink-0 shadow-lg`}
                 style={{ transform: "translateZ(20px)" }}
               >
-                {partner.photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={partner.photo_url} alt={partner.name} className="w-full h-full rounded-2xl object-cover" />
-                ) : (
-                  <span className="text-sm font-bold text-white">{initials}</span>
-                )}
+                <span className="text-sm font-bold text-white">{initials}</span>
               </motion.div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-semibold text-white truncate text-[15px]">
-                      {partner.name || "Unknown Partner"}
-                    </p>
+                    <p className="font-semibold text-white truncate text-[15px]">{partner.name}</p>
                     <p className="text-sm truncate mt-0.5" style={{ color: "#759fbc" }}>
                       {[partner.title, partner.firm].filter(Boolean).join(" · ")}
                     </p>
@@ -142,29 +110,16 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
                 </div>
 
                 <div className="mt-3 flex items-center gap-2.5">
-                  {partner.avg_overall > 0 ? (
-                    <>
-                      <StarRating value={partner.avg_overall} />
-                      <span className="text-sm font-bold text-white/80 tabular-nums">
-                        {partner.avg_overall.toFixed(1)}
-                      </span>
-                    </>
-                  ) : partner.ai_seeded && (partner.ai_overall ?? 0) > 0 ? (
-                    <span className="text-xs font-medium tabular-nums" style={{ color: "#90c3c8" }}>
-                      {partner.ai_overall?.toFixed(1)} AI est.
-                    </span>
-                  ) : (
-                    <span className="text-xs italic" style={{ color: "#759fbc" }}>No ratings yet</span>
-                  )}
+                  <span className="text-xs italic" style={{ color: "#759fbc" }}>No reviews yet</span>
                   <span style={{ color: "rgba(117,159,188,0.4)" }}>·</span>
                   <span className="text-xs px-2 py-0.5 rounded-full" style={{ color: "#759fbc", background: "rgba(31,86,115,0.12)", border: "1px solid rgba(117,159,188,0.2)" }}>
-                    {partner.review_count} {partner.review_count === 1 ? "review" : "reviews"}
+                    Be the first to review
                   </span>
                 </div>
               </div>
             </div>
           </div>
-        </Link>
+        </a>
       </motion.div>
     </motion.div>
   );
