@@ -45,6 +45,7 @@ export interface Review {
   review_text: string;
   green_flags: string;
   red_flags: string;
+  ai_generated?: boolean;
 }
 
 function toPartner(record: Airtable.Record<Airtable.FieldSet>): Partner {
@@ -81,6 +82,7 @@ function toReview(record: Airtable.Record<Airtable.FieldSet>): Review {
     review_text: (f["review_text"] as string) ?? "",
     green_flags: (f["green_flags"] as string) ?? "",
     red_flags: (f["red_flags"] as string) ?? "",
+    ai_generated: (f["ai_generated"] as boolean) ?? false,
   };
 }
 
@@ -215,6 +217,10 @@ export async function getAllPartnersForSeeding(): Promise<Partner[]> {
         "avg_overall",
         "review_count",
         "ai_seeded",
+        "ai_overall",
+        "ai_signals",
+        "ai_source_count",
+        "ai_confidence",
       ],
     })
     .all();
@@ -232,4 +238,49 @@ export async function updatePartnerAiSeed(
     ai_confidence: payload.ai_confidence,
     ai_seeded: payload.ai_seeded,
   });
+}
+
+export async function createSyntheticReview(
+  partnerRecordId: string,
+  review: Omit<Review, "id">
+): Promise<string> {
+  const record = await base(REVIEWS).create({
+    partner: [partnerRecordId],
+    relationship: review.relationship,
+    year: review.year,
+    rating_overall: review.rating_overall,
+    rating_responsiveness: review.rating_responsiveness,
+    rating_behavior: review.rating_behavior,
+    rating_founder_friendly: review.rating_founder_friendly,
+    rating_term_sheet_match: review.rating_term_sheet_match,
+    review_text: review.review_text,
+    green_flags: review.green_flags,
+    red_flags: review.red_flags,
+    ai_generated: true,
+    published: true,
+  } as Airtable.FieldSet);
+  return record.id;
+}
+
+export async function getAiReviewsForPartner(partnerId: string): Promise<Review[]> {
+  const records = await base(REVIEWS)
+    .select({
+      filterByFormula: `AND({ai_generated} = 1, FIND("${partnerId}", ARRAYJOIN({partner})))`,
+      fields: [
+        "relationship",
+        "year",
+        "rating_overall",
+        "rating_responsiveness",
+        "rating_behavior",
+        "rating_founder_friendly",
+        "rating_term_sheet_match",
+        "review_text",
+        "green_flags",
+        "red_flags",
+        "ai_generated",
+      ],
+      sort: [{ field: "year", direction: "desc" }],
+    })
+    .all();
+  return records.map(toReview);
 }

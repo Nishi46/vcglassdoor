@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   getPartnerBySlug,
   getReviewsForPartner,
+  getAiReviewsForPartner,
   getAllPublishedPartnerSlugs,
 } from "@/lib/airtable";
 import RatingDisplay from "@/components/RatingDisplay";
@@ -82,6 +83,7 @@ export default async function PartnerPage({
   if (!partner) notFound();
 
   const reviews = await getReviewsForPartner(partner.id);
+  const aiReviews = reviews.length === 0 ? await getAiReviewsForPartner(partner.id) : [];
 
   const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL;
   const reviewUrl = tallyUrl
@@ -263,6 +265,8 @@ export default async function PartnerPage({
         <h2 className="font-semibold text-gray-900 text-lg">
           {reviews.length > 0
             ? `${reviews.length} verified ${reviews.length === 1 ? "review" : "reviews"}`
+            : aiReviews.length > 0
+            ? "Verified reviews"
             : "No reviews yet"}
         </h2>
         <Link
@@ -275,7 +279,38 @@ export default async function PartnerPage({
         </Link>
       </div>
 
-      {reviews.length === 0 ? (
+      {/* AI-generated reviews — shown only when no verified reviews exist */}
+      {reviews.length === 0 && aiReviews.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-4">
+            <h2 className="font-semibold text-lg" style={{ color: "#b9b8d3" }}>
+              From public sources
+            </h2>
+            <span className="text-xs px-2.5 py-1 rounded-full"
+              style={{ color: "#90c3c8", background: "rgba(31,86,115,0.1)", border: "1px solid rgba(117,159,188,0.2)" }}>
+              AI-generated · not verified
+            </span>
+          </div>
+          <p className="text-sm mb-5" style={{ color: "#759fbc", opacity: 0.7 }}>
+            These reviews are synthesized from public internet sources by AI. They are estimates only and will be replaced by real founder reviews as they are submitted.
+          </p>
+          <div className="space-y-4">
+            {aiReviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {reviews.length > 0 && (
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <ReviewCard key={review.id} review={review} />
+          ))}
+        </div>
+      )}
+
+      {reviews.length === 0 && aiReviews.length === 0 && (
         <div className="text-center py-20 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
           <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -297,12 +332,6 @@ export default async function PartnerPage({
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
             </svg>
           </Link>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {reviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
         </div>
       )}
     </div>
