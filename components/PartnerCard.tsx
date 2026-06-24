@@ -71,12 +71,11 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
       onMouseLeave={onMouseLeave}
       style={{
         perspective: 1000,
-        transformStyle: "preserve-3d",
         width: "100%",
       }}
     >
       <motion.div
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d", width: "100%" }}
+        style={{ rotateX, rotateY, width: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <Link
@@ -111,7 +110,7 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
               {/* Avatar */}
               <motion.div
                 className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center shrink-0 shadow-lg`}
-                style={{ transform: "translateZ(20px)" }}
+                style={{  }}
               >
                 {partner.photo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
