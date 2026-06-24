@@ -85,10 +85,7 @@ export default async function PartnerPage({
   const reviews = await getReviewsForPartner(partner.id);
   const aiReviews = reviews.length === 0 ? await getAiReviewsForPartner(partner.id) : [];
 
-  const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL;
-  const reviewUrl = tallyUrl
-    ? `${tallyUrl}?partner=${encodeURIComponent(partner.name)}`
-    : "/submit";
+  const reviewUrl = `/submit?partner=${partner.slug}`;
 
   const avgResponsiveness = reviews.length
     ? reviews.reduce((s, r) => s + r.rating_responsiveness, 0) / reviews.length
@@ -187,8 +184,6 @@ export default async function PartnerPage({
               </span>
               <Link
                 href={reviewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
               >
                 + Add your experience
@@ -271,8 +266,6 @@ export default async function PartnerPage({
         </h2>
         <Link
           href={reviewUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           className="text-sm font-medium bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
         >
           Add your experience
@@ -323,8 +316,6 @@ export default async function PartnerPage({
           </p>
           <Link
             href={reviewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-blue-700 shadow-sm transition-all"
           >
             Submit yours

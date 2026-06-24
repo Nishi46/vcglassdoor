@@ -1,20 +1,37 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { getPartnerBySlug } from "@/lib/airtable";
+import SubmitFlow from "@/components/SubmitFlow";
 
 export const metadata: Metadata = {
   title: "Leave a Review — VCGlassdoor",
+  description: "Anonymously review a VC partner you pitched or raised from.",
 };
 
-export default function SubmitPage() {
-  const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL;
-  if (tallyUrl) redirect(tallyUrl);
+interface Props {
+  searchParams: Promise<{ partner?: string }>;
+}
+
+export default async function SubmitPage({ searchParams }: Props) {
+  const { partner: partnerSlug } = await searchParams;
+
+  let prefillPartner = null;
+  if (partnerSlug) {
+    const found = await getPartnerBySlug(partnerSlug);
+    if (found) {
+      prefillPartner = {
+        id: found.id,
+        name: found.name,
+        firm: found.firm,
+        title: found.title,
+        slug: found.slug,
+        photo_url: found.photo_url,
+      };
+    }
+  }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-20 text-center">
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">Leave a review</h1>
-      <p className="text-gray-500 mb-8">
-        Our review form isn&apos;t configured yet. Check back soon.
-      </p>
-    </div>
+    <main style={{ minHeight: "100vh", background: "#030818" }}>
+      <SubmitFlow prefillPartner={prefillPartner} />
+    </main>
   );
 }

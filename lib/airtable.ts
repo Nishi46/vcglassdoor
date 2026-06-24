@@ -49,6 +49,25 @@ export interface Review {
   ai_generated?: boolean;
 }
 
+export interface PendingReviewPayload {
+  partner_airtable_id?: string; // set if partner exists in Airtable
+  partner_name_manual?: string; // set if entered manually
+  partner_firm_manual?: string;
+  relationship: string;
+  year: number;
+  rating_overall: number;
+  rating_responsiveness?: number;
+  rating_behavior?: number;
+  rating_founder_friendly?: number;
+  rating_term_sheet_match?: number;
+  review_text?: string;
+  green_flags?: string;
+  red_flags?: string;
+  verification_file_name?: string;
+  verification_file_size?: number;
+  verification_skipped?: boolean;
+}
+
 function toPartner(record: Airtable.Record<Airtable.FieldSet>): Partner {
   const f = record.fields;
   return {
@@ -224,6 +243,36 @@ export async function getAllPublishedPartnerSlugs(): Promise<string[]> {
   return records
     .map((r) => r.fields["slug"] as string)
     .filter(Boolean);
+}
+
+// ── Submission helpers ───────────────────────────────────────────────────────
+
+export async function createPendingReview(payload: PendingReviewPayload): Promise<string> {
+  const fields: Airtable.FieldSet = {
+    relationship: payload.relationship,
+    year: payload.year,
+    rating_overall: payload.rating_overall,
+    ...(payload.rating_responsiveness ? { rating_responsiveness: payload.rating_responsiveness } : {}),
+    ...(payload.rating_behavior ? { rating_behavior: payload.rating_behavior } : {}),
+    ...(payload.rating_founder_friendly ? { rating_founder_friendly: payload.rating_founder_friendly } : {}),
+    ...(payload.rating_term_sheet_match ? { rating_term_sheet_match: payload.rating_term_sheet_match } : {}),
+    ...(payload.review_text ? { review_text: payload.review_text } : {}),
+    ...(payload.green_flags ? { green_flags: payload.green_flags } : {}),
+    ...(payload.red_flags ? { red_flags: payload.red_flags } : {}),
+    verification_status: "pending",
+    ...(payload.verification_file_name ? { verification_file_name: payload.verification_file_name } : {}),
+    ...(payload.verification_file_size ? { verification_file_size: payload.verification_file_size } : {}),
+    verification_skipped: payload.verification_skipped ?? false,
+    submitted_at: new Date().toISOString(),
+    published: false,
+    ai_generated: false,
+    ...(payload.partner_airtable_id ? { partner: [payload.partner_airtable_id] } : {}),
+    ...(payload.partner_name_manual ? { partner_name_manual: payload.partner_name_manual } : {}),
+    ...(payload.partner_firm_manual ? { partner_firm_manual: payload.partner_firm_manual } : {}),
+  };
+
+  const record = await base(REVIEWS).create(fields);
+  return record.id;
 }
 
 // ── Seeding helpers ──────────────────────────────────────────────────────────
