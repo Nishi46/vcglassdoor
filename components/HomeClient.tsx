@@ -44,7 +44,10 @@ function ScrollReveal({ children, delay = 0, opacityOnly = false }: { children: 
   );
 }
 
-export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]; tallyUrl: string }) {
+export default function HomeClient({ partners }: { partners: Partner[] }) {
+  const PREVIEW_COUNT = 10;
+  const previewPartners = partners.slice(0, PREVIEW_COUNT);
+  const remaining = Math.max(0, partners.length - PREVIEW_COUNT);
   return (
     <div style={{ background: "#030818", minHeight: "100vh" }}>
 
@@ -175,9 +178,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
                 </h2>
               </div>
               <a
-                href={tallyUrl || "/submit"}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/submit"
                 className="hidden sm:flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer"
                 style={{ color: "#759fbc" }}
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = "#90c3c8")}
@@ -190,16 +191,50 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
 
           {partners.length === 0 ? (
             <ScrollReveal delay={0.1}>
-              <EmptyDirectoryState tallyUrl={tallyUrl} />
+              <EmptyDirectoryState />
             </ScrollReveal>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {partners.map((partner, i) => (
-                <ScrollReveal key={partner.id} delay={i * 0.05} opacityOnly>
-                  <PartnerCard partner={partner} />
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {previewPartners.map((partner, i) => (
+                  <ScrollReveal key={partner.id} delay={i * 0.05} opacityOnly>
+                    <PartnerCard partner={partner} />
+                  </ScrollReveal>
+                ))}
+              </div>
+
+              {remaining > 0 && (
+                <ScrollReveal delay={0.1}>
+                  <div className="mt-8 flex flex-col items-center gap-4">
+                    <p className="text-sm" style={{ color: "rgba(117,159,188,0.6)" }}>
+                      +{remaining} more partners reviewed
+                    </p>
+                    <a
+                      href="/search"
+                      className="inline-flex items-center gap-2 text-sm font-medium px-6 py-2.5 rounded-full transition-all"
+                      style={{
+                        color: "#90c3c8",
+                        border: "1px solid rgba(144,195,200,0.25)",
+                        background: "rgba(31,86,115,0.08)",
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLAnchorElement).style.background = "rgba(31,86,115,0.16)";
+                        (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.4)";
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLAnchorElement).style.background = "rgba(31,86,115,0.08)";
+                        (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.25)";
+                      }}
+                    >
+                      Browse all partners
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                      </svg>
+                    </a>
+                  </div>
                 </ScrollReveal>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -212,9 +247,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
               Have you pitched or raised from a VC partner?
             </p>
             <motion.a
-              href={tallyUrl || "/submit"}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/submit"
               className="inline-flex items-center gap-2.5 font-semibold px-8 py-4 rounded-full text-sm text-white cursor-pointer"
               style={{
                 background: "linear-gradient(135deg, #1f5673 0%, #2a6d8f 50%, #759fbc 100%)",
@@ -245,7 +278,7 @@ export default function HomeClient({ partners, tallyUrl }: { partners: Partner[]
   );
 }
 
-function EmptyDirectoryState({ tallyUrl }: { tallyUrl: string }) {
+function EmptyDirectoryState() {
   return (
     <div className="text-center py-20 rounded-2xl border border-dashed" style={{ borderColor: "rgba(117,159,188,0.2)" }}>
       <p className="text-sm mb-4" style={{ color: "#b9b8d3" }}>No reviews published yet.</p>
@@ -253,9 +286,7 @@ function EmptyDirectoryState({ tallyUrl }: { tallyUrl: string }) {
         Reviews go live once 3+ verified submissions exist for the same partner.
       </p>
       <a
-        href={tallyUrl || "/submit"}
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/submit"
         className="inline-flex items-center gap-2 text-xs font-medium px-4 py-2 rounded-lg transition-colors"
         style={{ color: "#90c3c8", border: "1px solid rgba(117,159,188,0.25)" }}
       >
