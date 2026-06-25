@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPendingReview } from "@/lib/airtable";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(ip, "submit", 5, 60 * 60 * 1000); // 5 per hour
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   try {
     const body = await request.json();
 

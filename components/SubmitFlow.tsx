@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { savePendingReview } from "@/components/PendingReviewBanner";
 
 // ── Shared types ─────────────────────────────────────────────────────────────
 
@@ -900,9 +901,13 @@ export default function SubmitFlow({ prefillPartner }: SubmitFlowProps) {
         body: JSON.stringify(body),
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error ?? "Submit failed");
+      }
+
+      if (data.id && partner?.slug) {
+        savePendingReview(data.id, partner.slug);
       }
 
       setStep(3);

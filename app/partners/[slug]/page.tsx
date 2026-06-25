@@ -13,6 +13,7 @@ import ReviewList from "@/components/ReviewList";
 import StickyReviewCTA from "@/components/StickyReviewCTA";
 import BriefCard from "@/components/BriefCard";
 import WatchlistButton from "@/components/WatchlistButton";
+import PendingReviewBanner from "@/components/PendingReviewBanner";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -324,6 +325,9 @@ export default async function PartnerPage({
             </div>
           );
         })()}
+
+        {/* Pending review — only visible to the submitter via localStorage */}
+        <PendingReviewBanner partnerSlug={partner.slug} />
 
         {/* Reviews section header */}
         {reviews.length === 0 && (

@@ -434,6 +434,15 @@ export async function getAiReviewsForPartner(partnerId: string): Promise<Review[
   return records.map(toReview);
 }
 
+export async function getReviewById(recordId: string): Promise<Review | null> {
+  try {
+    const record = await base(REVIEWS).find(recordId);
+    return toReview(record);
+  } catch {
+    return null;
+  }
+}
+
 // ── Watchlist ──────────────────────────────────────────────────────────────
 
 export interface WatchlistSession {
