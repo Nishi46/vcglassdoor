@@ -323,7 +323,7 @@ export async function createPendingReview(payload: PendingReviewPayload): Promis
     ...(payload.review_text ? { review_text: payload.review_text } : {}),
     ...(payload.green_flags ? { green_flags: payload.green_flags } : {}),
     ...(payload.red_flags ? { red_flags: payload.red_flags } : {}),
-    verification_status: "pending",
+    verification_status: "Pending",
     ...(payload.verification_file_name ? { verification_file_name: payload.verification_file_name } : {}),
     ...(payload.verification_file_size ? { verification_file_size: payload.verification_file_size } : {}),
     verification_skipped: payload.verification_skipped ?? false,
