@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getPartnerBySlug, getReviewsForPartner } from "@/lib/airtable";
-import { generateBackchannelBrief } from "@/lib/brief";
+import { generateBackchannelBrief, gateBrief } from "@/lib/brief";
 import BriefCard from "@/components/BriefCard";
 import type { Metadata } from "next";
 
@@ -36,7 +36,8 @@ export default async function BriefPage({
   let brief = null;
   if (hasBrief) {
     try {
-      brief = await generateBackchannelBrief(partner, reviews);
+      const full = await generateBackchannelBrief(partner, reviews);
+      brief = gateBrief(full, "free");
     } catch {
       // If generation fails, show the card in idle state on the page
     }
@@ -81,7 +82,6 @@ export default async function BriefPage({
           partnerSlug={partner.slug}
           partnerName={partner.name}
           reviewCount={reviews.length}
-          userTier="free"
           initialBrief={brief}
         />
 

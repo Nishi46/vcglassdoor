@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPartnerBySlug, getReviewsForPartner } from "@/lib/airtable";
-import { generateBackchannelBrief } from "@/lib/brief";
+import { generateBackchannelBrief, gateBrief, type BriefTier } from "@/lib/brief";
+
+// TODO: replace with real session-based tier lookup once auth exists
+function resolveTier(_req: NextRequest): BriefTier {
+  // Pro tier check: look for a signed pro session header/cookie here when auth is built.
+  // Until then everyone is free — gating is enforced server-side, not in CSS.
+  return "free";
+}
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
@@ -22,5 +29,6 @@ export async function GET(
   }
 
   const brief = await generateBackchannelBrief(partner, reviews);
-  return NextResponse.json({ brief });
+  const tier = resolveTier(req);
+  return NextResponse.json({ brief: gateBrief(brief, tier) });
 }

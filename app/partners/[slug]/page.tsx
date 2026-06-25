@@ -274,7 +274,6 @@ export default async function PartnerPage({
             partnerSlug={partner.slug}
             partnerName={partner.name}
             reviewCount={reviews.length}
-            userTier="free"
           />
         </div>
 

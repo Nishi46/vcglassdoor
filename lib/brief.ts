@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Partner, Review } from "./airtable";
 
+// Full internal brief — never sent directly to clients
 export interface BackchannelBrief {
   partner_slug: string;
   generated_at: string;
@@ -9,6 +10,48 @@ export interface BackchannelBrief {
   red_themes: Array<{ text: string }>;
   tactical_tips: Array<{ text: string }>;
   data_basis: { review_count: number; source_count: number };
+}
+
+export type BriefTier = "free" | "pro";
+
+// What clients actually receive — pro fields are absent (not blurred) for free tier
+export type GatedBrief =
+  | {
+      tier: "free";
+      partner_slug: string;
+      generated_at: string;
+      quick_verdict: string;
+      data_basis: { review_count: number; source_count: number };
+      green_themes_count: number;
+      red_themes_count: number;
+      tactical_tips_count: number;
+    }
+  | {
+      tier: "pro";
+      partner_slug: string;
+      generated_at: string;
+      quick_verdict: string;
+      green_themes: Array<{ text: string }>;
+      red_themes: Array<{ text: string }>;
+      tactical_tips: Array<{ text: string }>;
+      data_basis: { review_count: number; source_count: number };
+    };
+
+export function gateBrief(brief: BackchannelBrief, tier: BriefTier): GatedBrief {
+  if (tier === "pro") {
+    return { tier: "pro", ...brief };
+  }
+  // Free tier: return counts only — no actual theme/tip text
+  return {
+    tier: "free",
+    partner_slug: brief.partner_slug,
+    generated_at: brief.generated_at,
+    quick_verdict: brief.quick_verdict,
+    data_basis: brief.data_basis,
+    green_themes_count: brief.green_themes.length,
+    red_themes_count: brief.red_themes.length,
+    tactical_tips_count: brief.tactical_tips.length,
+  };
 }
 
 // In-memory cache keyed by slug. TTL = 24h.
