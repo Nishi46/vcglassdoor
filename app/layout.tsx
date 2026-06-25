@@ -55,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <a href="/firms" className="hover:text-white transition-colors">Firms</a>
                 <a href="/about" className="hover:text-white transition-colors">How it works</a>
                 <a href="/submit" className="hover:text-white transition-colors">Leave a review</a>
+                <a href="/pro" className="hover:text-white transition-colors" style={{ color: "#90c3c8" }}>Founder Pro</a>
                 <span>© {new Date().getFullYear()}</span>
               </div>
             </div>

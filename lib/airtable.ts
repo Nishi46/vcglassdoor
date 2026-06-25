@@ -7,6 +7,7 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
 
 const PARTNERS = process.env.AIRTABLE_PARTNERS_TABLE ?? "Partners";
 const REVIEWS = process.env.AIRTABLE_REVIEWS_TABLE ?? "Reviews";
+const PRO_WAITLIST = process.env.AIRTABLE_PRO_WAITLIST_TABLE ?? "pro_waitlist";
 
 export interface Partner {
   id: string;
@@ -395,6 +396,19 @@ export async function createSyntheticReview(
     published: true,
   } as Airtable.FieldSet);
   return record.id;
+}
+
+export async function joinProWaitlist(email: string): Promise<void> {
+  // Check for duplicate before inserting
+  const existing = await base(PRO_WAITLIST)
+    .select({
+      filterByFormula: `{email} = "${email.replace(/"/g, '\\"')}"`,
+      maxRecords: 1,
+      fields: ["email"],
+    })
+    .firstPage();
+  if (existing.length > 0) return; // already on list — silently succeed
+  await base(PRO_WAITLIST).create({ email, created_at: new Date().toISOString() } as Airtable.FieldSet);
 }
 
 export async function getAiReviewsForPartner(partnerId: string): Promise<Review[]> {
