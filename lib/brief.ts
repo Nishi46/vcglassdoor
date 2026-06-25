@@ -123,20 +123,45 @@ Rules:
   });
 
   const raw = (message.content[0] as { type: string; text: string }).text.trim();
-  const parsed = JSON.parse(raw) as {
-    quick_verdict: string;
-    green_themes: Array<{ text: string }>;
+
+  // Strip markdown code fences Claude sometimes adds despite instructions
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+
+  let parsed: {
+    quick_verdict?: string;
+    green_themes?: Array<{ text: string }>;
     red_themes?: Array<{ text: string }>;
-    tactical_tips: Array<{ text: string }>;
+    tactical_tips?: Array<{ text: string }>;
   };
+
+  try {
+    parsed = JSON.parse(cleaned) as typeof parsed;
+  } catch {
+    // Claude returned non-JSON — produce a minimal fallback so the route
+    // doesn't 500. The fallback will not be cached so the next request retries.
+    const fallback: BackchannelBrief = {
+      partner_slug: partner.slug,
+      generated_at: new Date().toISOString(),
+      quick_verdict:
+        "We weren't able to generate a synthesis right now. Check back shortly — this usually resolves on the next attempt.",
+      green_themes: [],
+      red_themes: [],
+      tactical_tips: [],
+      data_basis: {
+        review_count: reviews.length,
+        source_count: partner.ai_source_count ?? 0,
+      },
+    };
+    return fallback;
+  }
 
   const brief: BackchannelBrief = {
     partner_slug: partner.slug,
     generated_at: new Date().toISOString(),
-    quick_verdict: parsed.quick_verdict,
-    green_themes: parsed.green_themes ?? [],
-    red_themes: parsed.red_themes ?? [],
-    tactical_tips: parsed.tactical_tips ?? [],
+    quick_verdict: parsed.quick_verdict ?? "Summary unavailable.",
+    green_themes: Array.isArray(parsed.green_themes) ? parsed.green_themes : [],
+    red_themes: Array.isArray(parsed.red_themes) ? parsed.red_themes : [],
+    tactical_tips: Array.isArray(parsed.tactical_tips) ? parsed.tactical_tips : [],
     data_basis: {
       review_count: reviews.length,
       source_count: partner.ai_source_count ?? 0,
