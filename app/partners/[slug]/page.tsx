@@ -11,6 +11,7 @@ import RatingDisplay from "@/components/RatingDisplay";
 import ReviewCard from "@/components/ReviewCard";
 import ReviewList from "@/components/ReviewList";
 import StickyReviewCTA from "@/components/StickyReviewCTA";
+import BriefCard from "@/components/BriefCard";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -260,6 +261,16 @@ export default async function PartnerPage({
             <ReviewList reviews={reviews} showHistogram />
           </div>
         )}
+
+        {/* Backchannel Brief */}
+        <div className="mb-6">
+          <BriefCard
+            partnerSlug={partner.slug}
+            partnerName={partner.name}
+            reviewCount={reviews.length}
+            userTier="free"
+          />
+        </div>
 
         {/* AI signals — only shown when no verified reviews yet */}
         {(() => {
