@@ -11,7 +11,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const { q } = await searchParams;
   const query = (q ?? "").trim();
   const partners = query ? await searchPartners(query.toLowerCase()) : [];
-  const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL ?? "/submit";
+
+  const reviewed = partners.filter((p) => !p.id.startsWith("static:") && p.review_count > 0);
+  const unreviewed = partners.filter((p) => p.id.startsWith("static:") || p.review_count === 0);
 
   return (
     <div style={{ background: "linear-gradient(180deg, #030818 0%, #060f24 100%)", minHeight: "100vh" }}>
@@ -35,14 +37,62 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <span className="text-white font-semibold">{partners.length}</span>{" "}
               {partners.length === 1 ? "result" : "results"} for &ldquo;{query}&rdquo;
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {partners.map((p) =>
-                p.id.startsWith("static:")
-                  ? <StaticPartnerCard key={p.id} partner={p} submitUrl={tallyUrl} />
-                  : <PartnerCard key={p.id} partner={p} />
-              )}
-            </div>
+
+            {/* Reviewed partners first */}
+            {reviewed.length > 0 && (
+              <div className="mb-8">
+                {unreviewed.length > 0 && (
+                  <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#759fbc" }}>
+                    With reviews
+                  </p>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {reviewed.map((p) => (
+                    <PartnerCard key={p.id} partner={p} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Unreviewed — clearly separated */}
+            {unreviewed.length > 0 && (
+              <div>
+                {reviewed.length > 0 && (
+                  <div className="flex items-center gap-3 mb-3">
+                    <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(117,159,188,0.5)" }}>
+                      Not yet reviewed
+                    </p>
+                    <div className="flex-1 h-px" style={{ background: "rgba(117,159,188,0.1)" }} />
+                  </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {unreviewed.map((p) => (
+                    <StaticPartnerCard key={p.id} partner={p} submitUrl={`/submit?partner=${p.slug}`} />
+                  ))}
+                </div>
+              </div>
+            )}
           </>
+        )}
+
+        {/* Browse firms link */}
+        {!query && (
+          <div className="mt-12 text-center">
+            <Link
+              href="/firms"
+              className="inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-full transition-all"
+              style={{
+                color: "#90c3c8",
+                border: "1px solid rgba(144,195,200,0.2)",
+                background: "rgba(31,86,115,0.08)",
+              }}
+            >
+              Browse by firm instead
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
         )}
       </div>
     </div>
@@ -50,7 +100,6 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 }
 
 function EmptyState({ icon, title, sub, cta }: { icon: "search" | "warning"; title: string; sub: string; cta?: boolean }) {
-  const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL ?? "/submit";
   return (
     <div className="text-center py-24 rounded-3xl border border-dashed" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
       <div className="w-14 h-14 rounded-2xl mx-auto mb-5 flex items-center justify-center"
@@ -63,11 +112,11 @@ function EmptyState({ icon, title, sub, cta }: { icon: "search" | "warning"; tit
       <p className="text-white font-semibold mb-1">{title}</p>
       <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>
       {cta && (
-        <a href={tallyUrl} target="_blank" rel="noopener noreferrer"
+        <Link href="/submit"
           className="inline-flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-xl"
-          style={{ background: "linear-gradient(135deg, #1d4ed8, #3b82f6)", color: "white" }}>
+          style={{ background: "linear-gradient(135deg, #1f5673, #759fbc)", color: "white" }}>
           Leave a review for them
-        </a>
+        </Link>
       )}
     </div>
   );

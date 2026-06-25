@@ -14,8 +14,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const tallyUrl = process.env.NEXT_PUBLIC_TALLY_FORM_URL ?? "";
-
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable} h-full`}>
       <body
@@ -27,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }}
       >
         <ClientShell>
-          <Nav tallyUrl={tallyUrl} />
+          <Nav />
           <main className="flex-1">{children}</main>
 
           {/* Footer */}
@@ -54,8 +52,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </div>
               </div>
               <div className="flex flex-wrap gap-5 text-sm" style={{ color: "#759fbc" }}>
+                <a href="/firms" className="hover:text-white transition-colors">Firms</a>
                 <a href="/about" className="hover:text-white transition-colors">How it works</a>
-                <a href={tallyUrl || "/submit"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Leave a review</a>
+                <a href="/submit" className="hover:text-white transition-colors">Leave a review</a>
                 <span>© {new Date().getFullYear()}</span>
               </div>
             </div>

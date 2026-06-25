@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
 import PartnerCard from "@/components/PartnerCard";
@@ -46,7 +46,16 @@ function ScrollReveal({ children, delay = 0, opacityOnly = false }: { children: 
 
 export default function HomeClient({ partners }: { partners: Partner[] }) {
   const PREVIEW_COUNT = 10;
-  const previewPartners = partners.slice(0, PREVIEW_COUNT);
+  const [tab, setTab] = useState<"top" | "recent">("top");
+
+  // Top-rated: already sorted by avg_overall from Airtable
+  const topPartners = partners.slice(0, PREVIEW_COUNT);
+  // Recently active: sort by review_count desc as a proxy until latest_review_date is added
+  const recentPartners = [...partners]
+    .sort((a, b) => b.review_count - a.review_count)
+    .slice(0, PREVIEW_COUNT);
+
+  const previewPartners = tab === "top" ? topPartners : recentPartners;
   const remaining = Math.max(0, partners.length - PREVIEW_COUNT);
   return (
     <div style={{ background: "#030818", minHeight: "100vh" }}>
@@ -95,7 +104,7 @@ export default function HomeClient({ partners }: { partners: Partner[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <SearchBar dark />
+            <SearchBar dark autocomplete />
           </motion.div>
         </div>
 
@@ -166,15 +175,13 @@ export default function HomeClient({ partners }: { partners: Partner[] }) {
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <ScrollReveal>
-            <div className="flex items-end justify-between mb-10">
+            <div className="flex items-end justify-between mb-6">
               <div>
                 <p className="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "#759fbc" }}>
                   Directory
                 </p>
                 <h2 className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-heading)", letterSpacing: "-0.02em" }}>
-                  {partners.length > 0
-                    ? <> Partners reviewed</>
-                    : "Be the first to submit"}
+                  {partners.length > 0 ? "Partners reviewed" : "Be the first to submit"}
                 </h2>
               </div>
               <a
@@ -187,6 +194,25 @@ export default function HomeClient({ partners }: { partners: Partner[] }) {
                 + Add a review
               </a>
             </div>
+
+            {partners.length > 0 && (
+              <div className="flex items-center gap-1 mb-8">
+                {(["top", "recent"] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className="text-xs font-semibold px-4 py-2 rounded-full transition-all"
+                    style={{
+                      background: tab === t ? "rgba(31,86,115,0.2)" : "transparent",
+                      border: `1px solid ${tab === t ? "rgba(117,159,188,0.4)" : "rgba(117,159,188,0.12)"}`,
+                      color: tab === t ? "#90c3c8" : "rgba(117,159,188,0.5)",
+                    }}
+                  >
+                    {t === "top" ? "Top rated" : "Most reviewed"}
+                  </button>
+                ))}
+              </div>
+            )}
           </ScrollReveal>
 
           {partners.length === 0 ? (
@@ -203,37 +229,38 @@ export default function HomeClient({ partners }: { partners: Partner[] }) {
                 ))}
               </div>
 
-              {remaining > 0 && (
-                <ScrollReveal delay={0.1}>
-                  <div className="mt-8 flex flex-col items-center gap-4">
+              <ScrollReveal delay={0.1}>
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  {remaining > 0 && (
                     <p className="text-sm" style={{ color: "rgba(117,159,188,0.6)" }}>
                       +{remaining} more partners reviewed
                     </p>
+                  )}
+                  <div className="flex items-center gap-3 flex-wrap justify-center">
                     <a
                       href="/search"
                       className="inline-flex items-center gap-2 text-sm font-medium px-6 py-2.5 rounded-full transition-all"
-                      style={{
-                        color: "#90c3c8",
-                        border: "1px solid rgba(144,195,200,0.25)",
-                        background: "rgba(31,86,115,0.08)",
-                      }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLAnchorElement).style.background = "rgba(31,86,115,0.16)";
-                        (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.4)";
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLAnchorElement).style.background = "rgba(31,86,115,0.08)";
-                        (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.25)";
-                      }}
+                      style={{ color: "#90c3c8", border: "1px solid rgba(144,195,200,0.25)", background: "rgba(31,86,115,0.08)" }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(31,86,115,0.16)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.4)"; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(31,86,115,0.08)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.25)"; }}
                     >
                       Browse all partners
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                       </svg>
                     </a>
+                    <a
+                      href="/firms"
+                      className="inline-flex items-center gap-2 text-sm font-medium px-6 py-2.5 rounded-full transition-all"
+                      style={{ color: "rgba(117,159,188,0.7)", border: "1px solid rgba(117,159,188,0.15)", background: "transparent" }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "#90c3c8"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(144,195,200,0.3)"; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(117,159,188,0.7)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(117,159,188,0.15)"; }}
+                    >
+                      Browse by firm
+                    </a>
                   </div>
-                </ScrollReveal>
-              )}
+                </div>
+              </ScrollReveal>
             </>
           )}
         </div>

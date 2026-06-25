@@ -245,6 +245,68 @@ export async function getAllPublishedPartnerSlugs(): Promise<string[]> {
     .filter(Boolean);
 }
 
+// ── Firm directory helpers ────────────────────────────────────────────────────
+
+export interface FirmSummary {
+  firm: string;
+  firmSlug: string;
+  partnerCount: number;
+  reviewedCount: number;
+  avgOverall: number;
+}
+
+export async function getPartnersByFirm(firmSlug: string): Promise<Partner[]> {
+  // Convert slug back to a partial firm name for a case-insensitive search.
+  // The slug is the firm name lowercased with spaces replaced by hyphens.
+  const firmName = firmSlug.replace(/-/g, " ");
+  const escaped = firmName.replace(/"/g, "");
+  const records = await base(PARTNERS)
+    .select({
+      filterByFormula: `AND({published} = 1, SEARCH("${escaped}", LOWER({firm})))`,
+      fields: [
+        "name", "firm", "title", "slug", "linkedin_url", "photo_url",
+        "avg_overall", "review_count", "ai_overall", "ai_seeded",
+      ],
+      sort: [{ field: "avg_overall", direction: "desc" }],
+    })
+    .all();
+  return records.map(toPartner);
+}
+
+export async function getFirmDirectory(): Promise<FirmSummary[]> {
+  const records = await base(PARTNERS)
+    .select({
+      filterByFormula: "{published} = 1",
+      fields: ["firm", "avg_overall", "review_count"],
+    })
+    .all();
+
+  const map = new Map<string, { total: number; reviewed: number; scoreSum: number }>();
+  for (const r of records) {
+    const firm = (r.fields["firm"] as string) ?? "";
+    if (!firm) continue;
+    const reviewCount = (r.fields["review_count"] as number) ?? 0;
+    const avgOverall = (r.fields["avg_overall"] as number) ?? 0;
+    const existing = map.get(firm) ?? { total: 0, reviewed: 0, scoreSum: 0 };
+    existing.total += 1;
+    if (reviewCount > 0) {
+      existing.reviewed += 1;
+      existing.scoreSum += avgOverall;
+    }
+    map.set(firm, existing);
+  }
+
+  return Array.from(map.entries())
+    .map(([firm, data]) => ({
+      firm,
+      firmSlug: firm.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+      partnerCount: data.total,
+      reviewedCount: data.reviewed,
+      avgOverall: data.reviewed > 0 ? data.scoreSum / data.reviewed : 0,
+    }))
+    .sort((a, b) => b.reviewedCount - a.reviewedCount || b.avgOverall - a.avgOverall);
+}
+
 // ── Submission helpers ───────────────────────────────────────────────────────
 
 export async function createPendingReview(payload: PendingReviewPayload): Promise<string> {

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 
-export default function Nav({ tallyUrl }: { tallyUrl: string }) {
+export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
@@ -27,9 +27,7 @@ export default function Nav({ tallyUrl }: { tallyUrl: string }) {
           marginTop: scrolled ? "12px" : "0",
           height: scrolled ? "52px" : "68px",
           borderRadius: scrolled ? "16px" : "0",
-          background: scrolled
-            ? "rgba(3, 14, 22, 0.88)"
-            : "transparent",
+          background: scrolled ? "rgba(3, 14, 22, 0.88)" : "transparent",
           backdropFilter: scrolled ? "blur(20px)" : "none",
           boxShadow: scrolled
             ? "0 0 0 1px rgba(117,159,188,0.15), 0 8px 32px rgba(0,0,0,0.5)"
@@ -55,32 +53,32 @@ export default function Nav({ tallyUrl }: { tallyUrl: string }) {
         {/* Right */}
         <nav className="flex items-center gap-1">
           <Link
+            href="/firms"
+            className="hidden sm:block text-sm px-3 py-2 rounded-lg transition-all duration-150"
+            style={{ color: "#b9b8d3" }}
+          >
+            Firms
+          </Link>
+          <Link
             href="/about"
-            className="text-sm px-3 py-2 rounded-lg transition-all duration-150 cursor-pointer"
+            className="text-sm px-3 py-2 rounded-lg transition-all duration-150"
             style={{ color: "#b9b8d3" }}
           >
             How it works
           </Link>
-          <motion.a
-            href={tallyUrl || "/submit"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 text-sm font-semibold px-4 py-2 rounded-full cursor-pointer"
-            style={{
-              background: "rgba(31,86,115,0.2)",
-              color: "#90c3c8",
-              border: "1px solid rgba(117,159,188,0.35)",
-            }}
-            whileHover={{
-              background: "#1f5673",
-              color: "white",
-              borderColor: "#759fbc",
-            }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-          >
-            Leave a review
-          </motion.a>
+          <motion.div className="ml-2">
+            <Link
+              href="/submit"
+              className="inline-block text-sm font-semibold px-4 py-2 rounded-full cursor-pointer"
+              style={{
+                background: "rgba(31,86,115,0.2)",
+                color: "#90c3c8",
+                border: "1px solid rgba(117,159,188,0.35)",
+              }}
+            >
+              Leave a review
+            </Link>
+          </motion.div>
         </nav>
       </motion.div>
     </motion.header>
