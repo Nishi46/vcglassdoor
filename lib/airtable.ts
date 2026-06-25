@@ -8,6 +8,7 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
 const PARTNERS = process.env.AIRTABLE_PARTNERS_TABLE ?? "Partners";
 const REVIEWS = process.env.AIRTABLE_REVIEWS_TABLE ?? "Reviews";
 const PRO_WAITLIST = process.env.AIRTABLE_PRO_WAITLIST_TABLE ?? "pro_waitlist";
+const WATCHLIST_SESSIONS = process.env.AIRTABLE_WATCHLIST_TABLE ?? "watchlist_sessions";
 
 export interface Partner {
   id: string;
@@ -432,4 +433,90 @@ export async function getAiReviewsForPartner(partnerId: string): Promise<Review[
     })
     .all();
   return records.map(toReview);
+}
+
+// ── Watchlist ──────────────────────────────────────────────────────────────
+
+export interface WatchlistSession {
+  recordId: string;
+  sessionId: string;
+  partnerSlugs: string[];
+  email?: string;
+}
+
+async function getWatchlistRecord(sessionId: string): Promise<WatchlistSession | null> {
+  const records = await base(WATCHLIST_SESSIONS)
+    .select({
+      filterByFormula: `{session_id} = "${sessionId}"`,
+      maxRecords: 1,
+      fields: ["session_id", "partner_slugs", "email"],
+    })
+    .firstPage();
+  if (records.length === 0) return null;
+  const f = records[0].fields;
+  return {
+    recordId: records[0].id,
+    sessionId: f["session_id"] as string,
+    partnerSlugs: ((f["partner_slugs"] as string) ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+    email: (f["email"] as string) ?? undefined,
+  };
+}
+
+export async function getWatchlist(sessionId: string): Promise<Partner[]> {
+  const session = await getWatchlistRecord(sessionId);
+  if (!session || session.partnerSlugs.length === 0) return [];
+
+  const partners: Partner[] = [];
+  for (const slug of session.partnerSlugs) {
+    const p = await getPartnerBySlug(slug);
+    if (p) partners.push(p);
+  }
+  // Sort by review_count desc (most active first)
+  return partners.sort((a, b) => b.review_count - a.review_count);
+}
+
+export async function addToWatchlist(sessionId: string, partnerSlug: string): Promise<void> {
+  const session = await getWatchlistRecord(sessionId);
+  if (session) {
+    if (session.partnerSlugs.includes(partnerSlug)) return;
+    const updated = [...session.partnerSlugs, partnerSlug];
+    await base(WATCHLIST_SESSIONS).update(session.recordId, {
+      partner_slugs: updated.join(","),
+    } as Airtable.FieldSet);
+  } else {
+    await base(WATCHLIST_SESSIONS).create({
+      session_id: sessionId,
+      partner_slugs: partnerSlug,
+      created_at: new Date().toISOString(),
+    } as Airtable.FieldSet);
+  }
+}
+
+export async function removeFromWatchlist(sessionId: string, partnerSlug: string): Promise<void> {
+  const session = await getWatchlistRecord(sessionId);
+  if (!session) return;
+  const updated = session.partnerSlugs.filter((s) => s !== partnerSlug);
+  await base(WATCHLIST_SESSIONS).update(session.recordId, {
+    partner_slugs: updated.join(","),
+  } as Airtable.FieldSet);
+}
+
+export async function setWatchlistEmail(sessionId: string, email: string): Promise<void> {
+  const session = await getWatchlistRecord(sessionId);
+  if (!session) return;
+  await base(WATCHLIST_SESSIONS).update(session.recordId, { email } as Airtable.FieldSet);
+}
+
+export async function getAllWatchlistSessions(): Promise<WatchlistSession[]> {
+  const records = await base(WATCHLIST_SESSIONS)
+    .select({ fields: ["session_id", "partner_slugs", "email"] })
+    .all();
+  return records
+    .map((r) => ({
+      recordId: r.id,
+      sessionId: r.fields["session_id"] as string,
+      partnerSlugs: ((r.fields["partner_slugs"] as string) ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+      email: (r.fields["email"] as string) ?? undefined,
+    }))
+    .filter((s) => s.email && s.partnerSlugs.length > 0);
 }

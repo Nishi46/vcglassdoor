@@ -67,6 +67,13 @@ export default function Nav() {
             How it works
           </Link>
           <Link
+            href="/watchlist"
+            className="hidden sm:block text-sm px-3 py-2 rounded-lg transition-all duration-150"
+            style={{ color: "#b9b8d3" }}
+          >
+            Watchlist
+          </Link>
+          <Link
             href="/pro"
             className="hidden sm:block text-sm px-3 py-2 rounded-lg transition-all duration-150"
             style={{ color: "#90c3c8" }}

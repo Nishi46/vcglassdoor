@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion, useSpring, useTransform } from "framer-motion";
 import type { Partner } from "@/lib/airtable";
+import WatchlistButton from "@/components/WatchlistButton";
 
 function StarRating({ value }: { value: number }) {
   return (
@@ -69,10 +70,8 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
       onMouseMove={onMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={onMouseLeave}
-      style={{
-        perspective: 1000,
-        width: "100%",
-      }}
+      className="relative"
+      style={{ perspective: 1000, width: "100%" }}
     >
       <motion.div
         style={{ rotateX, rotateY, width: "100%" }}
@@ -110,7 +109,6 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
               {/* Avatar */}
               <motion.div
                 className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center shrink-0 shadow-lg`}
-                style={{  }}
               >
                 {partner.photo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -122,7 +120,7 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="min-w-0 flex-1 pr-2">
                     <p className="font-semibold text-white truncate text-[15px]">
                       {partner.name || "Unknown Partner"}
                     </p>
@@ -165,6 +163,15 @@ export default function PartnerCard({ partner }: { partner: Partner }) {
           </div>
         </Link>
       </motion.div>
+
+      {/* Watchlist button — outside Link so click doesn't navigate */}
+      <div className="absolute top-3 right-3 z-10">
+        <WatchlistButton
+          partnerSlug={partner.slug}
+          partnerName={partner.name}
+          variant="compact"
+        />
+      </div>
     </motion.div>
   );
 }

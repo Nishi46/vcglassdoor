@@ -12,6 +12,7 @@ import ReviewCard from "@/components/ReviewCard";
 import ReviewList from "@/components/ReviewList";
 import StickyReviewCTA from "@/components/StickyReviewCTA";
 import BriefCard from "@/components/BriefCard";
+import WatchlistButton from "@/components/WatchlistButton";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -217,6 +218,11 @@ export default async function PartnerPage({
                 >
                   + Add your experience
                 </Link>
+                <WatchlistButton
+                  partnerSlug={partner.slug}
+                  partnerName={partner.name}
+                  variant="full"
+                />
               </div>
 
               {/* Firm context chips */}
