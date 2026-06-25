@@ -327,7 +327,6 @@ export async function createPendingReview(payload: PendingReviewPayload): Promis
     ...(payload.verification_file_name ? { verification_file_name: payload.verification_file_name } : {}),
     ...(payload.verification_file_size ? { verification_file_size: payload.verification_file_size } : {}),
     verification_skipped: payload.verification_skipped ?? false,
-    submitted_at: new Date().toISOString(),
     published: false,
     ai_generated: false,
     ...(payload.partner_airtable_id ? { partner: [payload.partner_airtable_id] } : {}),
