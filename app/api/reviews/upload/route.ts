@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { put } from "@vercel/blob";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-// MVP: accepts the file and returns metadata. The file name + size get stored
-// on the Airtable review record by the submit route. A future iteration can
-// pipe the file to Vercel Blob or S3 and return a real URL.
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const rl = checkRateLimit(ip, "upload", 10, 60 * 60 * 1000); // 10 per hour
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -35,11 +43,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const arrayBuffer = await file.arrayBuffer();
+    const blob = await put(
+      `verifications/${Date.now()}-${file.name}`,
+      arrayBuffer,
+      { access: "private", contentType: file.type }
+    );
+
     return NextResponse.json({
       success: true,
       file_name: file.name,
       file_size: file.size,
       file_type: file.type,
+      verification_url: blob.url,
     });
   } catch (err) {
     console.error("File upload error:", err);

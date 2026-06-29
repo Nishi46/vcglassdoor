@@ -726,7 +726,7 @@ function VerificationStep({
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
         </svg>
         <p className="text-xs leading-relaxed" style={{ color: "rgba(117,159,188,0.7)" }}>
-          Your name and company are never stored. We only verify that an interaction happened, then delete the file. All identifying information is redacted before our team reviews it.
+          Your name and company are never stored. Files are stored securely and reviewed by our moderation team to verify that an interaction occurred.
         </p>
       </div>
 
@@ -873,6 +873,7 @@ export default function SubmitFlow({ prefillPartner }: SubmitFlowProps) {
     try {
       let fileName: string | undefined;
       let fileSize: number | undefined;
+      let verificationUrl: string | undefined;
 
       if (file) {
         const fd = new FormData();
@@ -882,6 +883,7 @@ export default function SubmitFlow({ prefillPartner }: SubmitFlowProps) {
           const uploadData = await uploadRes.json();
           fileName = uploadData.file_name;
           fileSize = uploadData.file_size;
+          verificationUrl = uploadData.verification_url;
         }
       }
 
@@ -892,6 +894,7 @@ export default function SubmitFlow({ prefillPartner }: SubmitFlowProps) {
         ...ratingsData,
         verification_file_name: fileName,
         verification_file_size: fileSize,
+        verification_url: verificationUrl,
         verification_skipped: !file,
       };
 

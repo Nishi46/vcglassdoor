@@ -1,6 +1,28 @@
 import Airtable from "airtable";
 import { POPULAR_PARTNERS } from "./popular-partners";
 
+// ── Formula injection guards ──────────────────────────────────────────────────
+
+function assertSafeSlug(value: string): void {
+  if (!/^[a-z0-9-]+$/.test(value)) {
+    throw new Error(`Invalid slug: ${value}`);
+  }
+}
+
+function assertSafeUuid(value: string): void {
+  if (!/^[0-9a-f-]{36}$/.test(value)) {
+    throw new Error(`Invalid session id: ${value}`);
+  }
+}
+
+function assertSafeEmail(value: string): void {
+  if (/"/.test(value)) throw new Error("Invalid email");
+}
+
+function sanitizeSearchQuery(value: string): string {
+  return value.replace(/["\\\n\r]/g, "");
+}
+
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
   process.env.AIRTABLE_BASE_ID!
 );
@@ -67,6 +89,7 @@ export interface PendingReviewPayload {
   red_flags?: string;
   verification_file_name?: string;
   verification_file_size?: number;
+  verification_url?: string;
   verification_skipped?: boolean;
 }
 
@@ -134,6 +157,7 @@ export async function getPublishedPartners(): Promise<Partner[]> {
 }
 
 export async function getPartnerBySlug(slug: string): Promise<Partner | null> {
+  assertSafeSlug(slug);
   const records = await base(PARTNERS)
     .select({
       filterByFormula: `AND({published} = 1, {slug} = "${slug}")`,
@@ -192,7 +216,7 @@ export async function getReviewsForPartner(partnerId: string): Promise<Review[]>
 }
 
 export async function searchPartners(query: string): Promise<Partner[]> {
-  const escaped = query.replace(/"/g, "");
+  const escaped = sanitizeSearchQuery(query);
   const records = await base(PARTNERS)
     .select({
       filterByFormula: `AND({published} = 1, OR(SEARCH("${escaped}", LOWER({name})), SEARCH("${escaped}", LOWER({firm}))))`,
@@ -258,10 +282,11 @@ export interface FirmSummary {
 }
 
 export async function getPartnersByFirm(firmSlug: string): Promise<Partner[]> {
+  assertSafeSlug(firmSlug);
   // Convert slug back to a partial firm name for a case-insensitive search.
   // The slug is the firm name lowercased with spaces replaced by hyphens.
   const firmName = firmSlug.replace(/-/g, " ");
-  const escaped = firmName.replace(/"/g, "");
+  const escaped = sanitizeSearchQuery(firmName);
   const records = await base(PARTNERS)
     .select({
       filterByFormula: `AND({published} = 1, SEARCH("${escaped}", LOWER({firm})))`,
@@ -326,6 +351,7 @@ export async function createPendingReview(payload: PendingReviewPayload): Promis
     verification_status: "Pending",
     ...(payload.verification_file_name ? { verification_file_name: payload.verification_file_name } : {}),
     ...(payload.verification_file_size ? { verification_file_size: payload.verification_file_size } : {}),
+    ...(payload.verification_url ? { verification_url: payload.verification_url } : {}),
     verification_skipped: payload.verification_skipped ?? false,
     published: false,
     ai_generated: false,
@@ -399,10 +425,11 @@ export async function createSyntheticReview(
 }
 
 export async function joinProWaitlist(email: string): Promise<void> {
+  assertSafeEmail(email);
   // Check for duplicate before inserting
   const existing = await base(PRO_WAITLIST)
     .select({
-      filterByFormula: `{email} = "${email.replace(/"/g, '\\"')}"`,
+      filterByFormula: `{email} = "${email}"`,
       maxRecords: 1,
       fields: ["email"],
     })
@@ -453,6 +480,7 @@ export interface WatchlistSession {
 }
 
 async function getWatchlistRecord(sessionId: string): Promise<WatchlistSession | null> {
+  assertSafeUuid(sessionId);
   const records = await base(WATCHLIST_SESSIONS)
     .select({
       filterByFormula: `{session_id} = "${sessionId}"`,

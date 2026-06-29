@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPendingReview } from "@/lib/airtable";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { notifyModerator } from "@/lib/notify";
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
@@ -31,6 +32,7 @@ export async function POST(request: NextRequest) {
       red_flags,
       verification_file_name,
       verification_file_size,
+      verification_url,
       verification_skipped,
     } = body;
 
@@ -64,8 +66,15 @@ export async function POST(request: NextRequest) {
       red_flags,
       verification_file_name,
       verification_file_size,
+      verification_url,
       verification_skipped: verification_skipped ?? false,
     });
+
+    // Fire-and-forget — notification failure must not fail the submission
+    notifyModerator(
+      recordId,
+      partner_name_manual ?? partner_airtable_id ?? "unknown"
+    ).catch((e) => console.error("Moderator notification error:", e));
 
     return NextResponse.json({ success: true, id: recordId });
   } catch (err) {
