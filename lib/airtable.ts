@@ -4,7 +4,8 @@ import { POPULAR_PARTNERS } from "./popular-partners";
 // ── Formula injection guards ──────────────────────────────────────────────────
 
 function assertSafeSlug(value: string): void {
-  if (!/^[a-z0-9-]+$/.test(value)) {
+  // Block Airtable formula metacharacters; allow apostrophes and unicode in real slugs
+  if (/["\\\n\r]/.test(value)) {
     throw new Error(`Invalid slug: ${value}`);
   }
 }
