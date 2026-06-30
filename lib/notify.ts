@@ -1,14 +1,14 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function notifyModerator(
   reviewId: string,
   partnerLabel: string
 ): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.MODERATOR_EMAIL;
-  if (!to) return;
+  if (!apiKey || !to) return;
 
+  const resend = new Resend(apiKey);
   const from =
     process.env.RESEND_FROM ?? "VCGlassdoor <noreply@vcglassdoor.com>";
 
